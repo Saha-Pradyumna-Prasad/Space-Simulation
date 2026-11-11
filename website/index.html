@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/jpeg" href="./space-images/galaxy.jpg">
+    <title>Milky Way & Solar System Explorer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <canvas id="starfield"></canvas>
+
+    <nav class="navbar navbar-dark bg-dark-transparent fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">🌌 Solar System Explorer</a>
+            <button class="btn btn-outline-info" onclick="openSimulation()">🚀 Download PC Simulator Game</button>
+        </div>
+    </nav>
+
+    <header class="hero-section text-center">
+        <div class="container">
+            <h1 class="display-4 fw-bold glow-text">Explore the Cosmos</h1>
+            <p class="lead">Discover the Milky Way and our Solar System.</p>
+            <!-- Full screen simulation e jawar button -->
+            <a href="simulation.html" class="btn btn-success btn-lg mt-3 px-5 py-3 fs-4 shadow-lg">▶ Play 3D Simulation</a><br>
+            <a href="earth-globe.html" class="btn btn-info btn-lg mt-3 px-4 fw-bold shadow">🌍 Explore Earth 3D</a>
+        </div>
+        <a href="compare.html" class="btn btn-primary btn-lg mt-3 px-4 fw-bold shadow">⚖️ Compare Planets</a>
+        <a href="videos.html" class="btn btn-danger btn-lg mt-3 px-4 fw-bold shadow">🎥 Watch Space Videos</a>
+        <a href="gallery.html" class="btn btn-primary btn-lg mt-3 px-4 fw-bold shadow">📸 Space Photo Gallery</a>
+    </header>
+
+    <section id="planets" class="container py-5">
+        <h2 class="glow-text text-center mb-5">Explore the Planets & Moons</h2>
+        <div class="row g-4" id="planet-container">
+            <!-- Planet Cards injected via JS -->
+        </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- QUIZ SECTION ADD KORA HOYECHE -->
+    <!-- ========================================== -->
+    <section id="quiz" class="container py-5 mb-5">
+        <h2 class="glow-text text-center mb-4">🚀 Space Quiz Challenge</h2>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="quiz-card p-4 rounded" style="background: rgba(20, 25, 45, 0.8); border: 1px solid #00d2ff; backdrop-filter: blur(10px); box-shadow: 0 0 20px rgba(0,210,255,0.2);">
+                    <h4 id="quizQuestion" class="text-center mb-4 text-light fw-bold">Loading Question...</h4>
+                    
+                    <div id="quizOptions" class="d-grid gap-3"></div>
+                    
+                    <div id="quizResult" class="mt-4 text-center fs-4 fw-bold" style="min-height: 40px;"></div>
+                    
+                    <div class="text-center mt-4 border-top border-secondary pt-4">
+                        <button class="btn btn-outline-info px-4 py-2" onclick="nextQuestion()">Next Question ➡️</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- ========================================== -->
+
+    <div class="modal fade" id="simulationModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark-transparent text-light border-warning">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title">🚀 Premium PC Simulator</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <h4 class="text-warning mb-3">N-Body Space Simulator 3D</h4>
+                    <p>Experience the full real-time physics simulation directly on your PC.</p>
+                    <p class="text-info fw-bold">Requirements: Windows 10 (64-bit)</p>
+                    <a href="./download/space_simulator.exe" download class="btn btn-warning btn-lg mt-3 px-4">⬇ Download for Windows (x64)</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Responsive Footer -->
+    <footer class="footer-custom mt-auto py-4">
+        <div class="container text-center">
+            <div class="row justify-content-center align-items-center">
+                <div class="col-md-6 mb-2 mb-md-0">
+                    <p class="mb-0 text-light">
+                        &copy; 2026 Solar System Explorer. All Rights Reserved.
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end text-center">
+                    <p class="mb-0 text-light">
+                        Powered by <a href="#" class="dev-link">Dev.Ankur</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+
+    <!-- ========================================== -->
+    <!-- 20 QUESTIONS QUIZ LOGIC -->
+    <!-- ========================================== -->
+    <script>
+        const quizData = [
+            { question: "Which planet is known as the Red Planet?", options: ["Earth", "Mars", "Jupiter", "Venus"], answer: "Mars" },
+            { question: "Which planet has the most moons?", options: ["Earth", "Saturn", "Jupiter", "Neptune"], answer: "Saturn" },
+            { question: "What is the hottest planet in our solar system?", options: ["Mercury", "Venus", "Mars", "Jupiter"], answer: "Venus" },
+            { question: "Which planet rotates on its side?", options: ["Uranus", "Neptune", "Saturn", "Pluto"], answer: "Uranus" },
+            { question: "What is the largest moon in the Solar System?", options: ["Titan", "Ganymede", "Moon", "Europa"], answer: "Ganymede" },
+            { question: "How long does it take for light from the Sun to reach Earth?", options: ["8 Minutes", "8 Seconds", "8 Hours", "8 Days"], answer: "8 Minutes" },
+            { question: "Which planet is closest to the Sun?", options: ["Venus", "Earth", "Mercury", "Mars"], answer: "Mercury" },
+            { question: "What is the name of our galaxy?", options: ["Andromeda", "Milky Way", "Sombrero", "Whirlpool"], answer: "Milky Way" },
+            { question: "Which planet has the shortest day?", options: ["Mercury", "Earth", "Jupiter", "Mars"], answer: "Jupiter" },
+            { question: "What is the Great Red Spot?", options: ["A Volcano", "A Storm", "A Crater", "A Mountain"], answer: "A Storm" },
+            { question: "Which planet is known for its beautiful ring system?", options: ["Jupiter", "Saturn", "Uranus", "Neptune"], answer: "Saturn" },
+            { question: "What is the smallest planet in our solar system?", options: ["Mars", "Mercury", "Venus", "Earth"], answer: "Mercury" },
+            { question: "Which planet is often called Earth's twin?", options: ["Mars", "Venus", "Mercury", "Neptune"], answer: "Venus" },
+            { question: "Who discovered the laws of planetary motion?", options: ["Isaac Newton", "Albert Einstein", "Johannes Kepler", "Galileo Galilei"], answer: "Johannes Kepler" },
+            { question: "What force keeps planets in orbit around the Sun?", options: ["Magnetism", "Gravity", "Friction", "Centrifugal Force"], answer: "Gravity" },
+            { question: "What is the closest star to Earth?", options: ["Sirius", "Proxima Centauri", "The Sun", "Alpha Centauri"], answer: "The Sun" },
+            { question: "Which planet has the strongest winds in the solar system?", options: ["Neptune", "Jupiter", "Saturn", "Earth"], answer: "Neptune" },
+            { question: "What is a shooting star actually called?", options: ["Comet", "Asteroid", "Meteor", "Nebula"], answer: "Meteor" },
+            { question: "Which planet has a day longer than its year?", options: ["Venus", "Mars", "Mercury", "Earth"], answer: "Venus" },
+            { question: "What is the center of our solar system?", options: ["Earth", "The Moon", "The Sun", "Jupiter"], answer: "The Sun" }
+        ];
+
+        let currentQuiz = 0;
+        let score = 0;
+
+        function loadQuiz() {
+            const quizContainer = document.getElementById('quizOptions');
+            const questionElement = document.getElementById('quizQuestion');
+            const resultElement = document.getElementById('quizResult');
+            
+            if (!quizContainer || !questionElement) return;
+
+            resultElement.innerText = "";
+            quizContainer.innerHTML = "";
+
+            if (currentQuiz >= quizData.length) {
+                questionElement.innerText = "Quiz Completed! 🎉";
+                resultElement.innerHTML = `Your Score: <span class="text-info">${score}/${quizData.length}</span>`;
+                quizContainer.innerHTML = `<button class="btn btn-success btn-lg w-100" onclick="restartQuiz()">Restart Quiz 🔄</button>`;
+                return;
+            }
+
+            const currentQ = quizData[currentQuiz];
+            // Show question number
+            questionElement.innerText = `Q${currentQuiz + 1}. ${currentQ.question}`;
+
+            currentQ.options.forEach(option => {
+                const btn = document.createElement('button');
+                btn.className = 'btn btn-outline-light text-start fs-5';
+                btn.innerText = option;
+                btn.onclick = () => checkAnswer(option, currentQ.answer);
+                quizContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selected, correct) {
+            if (selected === correct) {
+                score++;
+                document.getElementById('quizResult').innerHTML = `<span class="text-success">✅ Correct!</span>`;
+            } else {
+                document.getElementById('quizResult').innerHTML = `<span class="text-danger">❌ Wrong! The answer was ${correct}.</span>`;
+            }
+
+            // Disable buttons after answering and highlight correct one
+            const buttons = document.querySelectorAll('#quizOptions button');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if(btn.innerText === correct) {
+                    btn.className = 'btn btn-success text-start fs-5'; 
+                } else if (btn.innerText === selected && selected !== correct) {
+                    btn.className = 'btn btn-danger text-start fs-5'; 
+                }
+            });
+
+            currentQuiz++;
+            setTimeout(loadQuiz, 2500); // 2.5 second por next question ashbe
+        }
+
+        function nextQuestion() {
+            if (currentQuiz < quizData.length) {
+                currentQuiz++;
+                loadQuiz();
+            }
+        }
+
+        function restartQuiz() {
+            currentQuiz = 0;
+            score = 0;
+            loadQuiz();
+        }
+
+        // Page load hole quiz start hobe
+        window.addEventListener('load', () => {
+            if (document.getElementById('quizOptions')) {
+                loadQuiz();
+            }
+        });
+    </script>
+
+    <!-- Web inspect Off code -->
+     <script>
+    // 1. Right Click Block
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+    });
+
+    // 2. F12 ar Developer Tools Shortcut Block
+    document.addEventListener('keydown', function(e) {
+        if (e.key === "F12" || e.keyCode === 123) {
+            e.preventDefault();
+            return false;
+        }
+        
+        if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C' || e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
+            e.preventDefault();
+            return false;
+        }
+
+        if (e.ctrlKey && (e.key === 'U' || e.keyCode === 85)) {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+    // 3. Extra Security
+    setInterval(function() {
+        debugger; 
+    }, 1000); 
+    
+    document.addEventListener('copy', function(e) {
+        e.preventDefault();
+        alert("Copying is disabled on this website.");
+    });
+</script>
+</body>
+</html>

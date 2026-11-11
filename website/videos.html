@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/jpeg" href="./space-images/galaxy.jpg">
+    <title>Space Documentry - Solar System Explorer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { background-color: #050510; color: white; padding-bottom: 50px; font-family: 'Space Grotesk', sans-serif;}
+        #starfield { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; }
+
+        .video-card {
+            background: rgba(20, 25, 45, 0.7);
+            border: 1px solid rgba(0, 210, 255, 0.3);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+        }
+        
+        .video-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 210, 255, 0.2);
+            border-color: #00d2ff;
+        }
+
+        /* Thumbnail Container */
+        .thumbnail-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            background: #000;
+            overflow: hidden;
+        }
+
+        .thumbnail-container img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .video-card:hover .thumbnail-container img {
+            transform: scale(1.1); /* Zoom effect on hover */
+        }
+
+        /* Play Button Overlay */
+        .play-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex; justify-content: center; align-items: center;
+            transition: background 0.3s ease;
+        }
+
+        .video-card:hover .play-overlay {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .play-btn {
+            width: 60px; height: 60px;
+            background: #ff0000;
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            color: white; font-size: 24px;
+            padding-left: 5px; /* Align triangle center */
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
+            transition: transform 0.3s ease;
+        }
+
+        .video-card:hover .play-btn {
+            transform: scale(1.15);
+            background: #ff3333;
+        }
+
+        .video-info { padding: 20px; }
+
+        .video-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem; color: #00d2ff;
+            margin-bottom: 8px; font-weight: bold;
+            line-height: 1.4;
+        }
+
+        .video-desc {
+            font-size: 0.9rem; color: #aaa; margin: 0;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+        }
+
+        .page-title {
+            font-family: 'Orbitron', sans-serif;
+            color: #00d2ff; text-shadow: 0 0 20px rgba(0, 210, 255, 0.6);
+            text-align: center; margin-top: 80px; margin-bottom: 40px;
+        }
+
+                /* Coming Soon Tag Styling */
+        .coming-soon-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0, 210, 255, 0.1);
+            border: 1px solid #00d2ff;
+            padding: 15px 30px;
+            border-radius: 50px;
+            color: #00d2ff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.2);
+            backdrop-filter: blur(10px);
+            animation: pulseGlow 2s infinite;
+        }
+
+        .coming-soon-tag:hover {
+            background: #00d2ff;
+            color: #000;
+            box-shadow: 0 0 30px rgba(0, 210, 255, 0.8);
+            transform: scale(1.05);
+        }
+
+        /* Sparkle Animation */
+        .sparkle {
+            font-size: 1.2rem;
+            animation: sparkleAnim 1.5s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 10px rgba(0, 210, 255, 0.2); }
+            50% { box-shadow: 0 0 25px rgba(0, 210, 255, 0.5); }
+            100% { box-shadow: 0 0 10px rgba(0, 210, 255, 0.2); }
+        }
+
+        @keyframes sparkleAnim {
+            0% { opacity: 0.5; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 576px) {
+            .coming-soon-tag {
+                font-size: 0.9rem;
+                padding: 12px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="starfield"></canvas>
+
+    <nav class="navbar navbar-dark bg-dark-transparent fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">← Back to Home</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 class="page-title"> Space Documentry</h1>
+        
+        <div class="row g-4">
+            
+            <!-- VIDEO 1 -->
+            <div class="col-md-6 col-lg-4">
+                <!-- Ekhane onclick diye YouTube link ta deya hoyeche -->
+                <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=EFO_bsg1sw8&list=PLivjPDlt6ApTHMisqbFv2SmJ7x0333mFz', '_blank')">
+                    <div class="thumbnail-container">
+                        <!-- YouTube Thumbnail Link -->
+                        <img src="https://img.youtube.com/vi/EFO_bsg1sw8/maxresdefault.jpg" alt="Solar System 101">
+                        <div class="play-overlay"><div class="play-btn">▶</div></div>
+                    </div>
+                    <div class="video-info">
+                        <h5 class="video-title">Solar System 101</h5>
+                        <p class="video-desc">National Geographic er ekta sundor video jekhane amra amader solar system somporke janbo.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIDEO 2 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=lFiOZqyymUY', '_blank')">
+                    <div class="thumbnail-container">
+                        <img src="https://img.youtube.com/vi/lFiOZqyymUY/maxresdefault.jpg" alt="Journey Through The Universe">
+                        <div class="play-overlay"><div class="play-btn">▶</div></div>
+                    </div>
+                    <div class="video-info">
+                        <h5 class="video-title">Journey Through The Universe</h5>
+                        <p class="video-desc">Mahakasher ekta darun visual journey.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIDEO 3 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=SLmWY_ycFUA', '_blank')">
+                    <div class="thumbnail-container">
+                        <img src="https://img.youtube.com/vi/SLmWY_ycFUA/maxresdefault.jpg" alt="The Sun: Secrets of Our Star">
+                        <div class="play-overlay"><div class="play-btn">▶</div></div>
+                    </div>
+                    <div class="video-info">
+                        <h5 class="video-title">The Sun: Secrets of Our Star</h5>
+                        <p class="video-desc">Surya ba Sun somporke bivinno gopon tottho.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIDEO 4 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=1LYSfpKog4w&t=3047s', '_blank')">
+                    <div class="thumbnail-container">
+                        <img src="https://img.youtube.com/vi/1LYSfpKog4w/maxresdefault.jpg" alt="Black Holes Explained">
+                        <div class="play-overlay"><div class="play-btn">▶</div></div>
+                    </div>
+                    <div class="video-info">
+                        <h5 class="video-title">Black Holes Explained</h5>
+                        <p class="video-desc">Black hole kivabe toiri hoy, seta bujhte chaile ei video ta dekhte paren.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIDEO 5 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=QvETyBh4OsI', '_blank')">
+                    <div class="thumbnail-container">
+                        <img src="https://img.youtube.com/vi/QvETyBh4OsI/maxresdefault.jpg" alt="Planet Earth: The Blue Planet">
+                        <div class="play-overlay"><div class="play-btn">▶</div></div>
+                    </div>
+                    <div class="video-info">
+                        <h5 class="video-title">Planet Earth: The Blue Planet</h5>
+                        <p class="video-desc">Prithibir sundorjo ebong tar bivinno feature somporke.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIDEO 6 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=wvuyIvzBBb0', '_blank')">
+                    <div class="thumbnail-container">
+                        <img src="https://img.youtube.com/vi/wvuyIvzBBb0/maxresdefault.jpg" alt="Mars: The Red Planet">
+                        <div class="play-overlay"><div class="play-btn">▶</div></div>
+                    </div>
+                    <div class="video-info">
+                        <h5 class="video-title">Mars: The Red Planet</h5>
+                        <p class="video-desc">Mangal graho ebong manush er sekhane jaoar chinta somporke.</p>
+                    </div>
+                </div>
+            </div>
+
+             <!-- VIDEO 7 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=O49glGhCL4I', '_blank')">
+                    <div class="thumbnail-container">
+                        <img src="https://img.youtube.com/vi/O49glGhCL4I/maxresdefault.jpg" alt="Mars: The Red Planet">
+                        <div class="play-overlay"><div class="play-btn">▶</div></div>
+                    </div>
+                    <div class="video-info">
+                        <h5 class="video-title">Journey to the Edge of the Universe (2008 docufilm)</h5>
+                        <p class="video-desc">A tour of the cosmos, from Earth′s surface to the outermost reaches of the universe….</p>
+                    </div>
+                </div>
+            </div>
+
+             <!-- VIDEO 8 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=VzWTyufdkug', '_blank')">
+                    <div class="thumbnail-container">
+                        <img src="https://img.youtube.com/vi/VzWTyufdkug/maxresdefault.jpg" alt="Mars: The Red Planet">
+                        <div class="play-overlay"><div class="play-btn">▶</div></div>
+                    </div>
+                    <div class="video-info">
+                        <h5 class="video-title">Monster BLACK HOLE </h5>
+                        <p class="video-desc">Black Holes are components of the our Galaxy. But what is a Black Hole and how Monster Black holes are formed?</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIDEO 9 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=0V08M1NcdJQ', '_blank')">
+                    <div class="thumbnail-container">
+                        <img src="https://img.youtube.com/vi/0V08M1NcdJQ/maxresdefault.jpg" alt="Mars: The Red Planet">
+                        <div class="play-overlay"><div class="play-btn">▶</div></div>
+                    </div>
+                    <div class="video-info">
+                        <h5 class="video-title">The Extraordinary Things Hubble Has Seen </h5>
+                        <p class="video-desc">Since it launched more than three decades ago, the data that the Hubble space telescope has collected has been used to write more than 18,000 peer-reviewed scientific publications, from planet formation to gigantic black holes.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIDEO 10 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=n--9w6zt9MM', '_blank')">
+                    <div class="thumbnail-container">
+                        <img src="https://img.youtube.com/vi/n--9w6zt9MM/maxresdefault.jpg" alt="Mars: The Red Planet">
+                        <div class="play-overlay"><div class="play-btn">▶</div></div>
+                    </div>
+                    <div class="video-info">
+                        <h5 class="video-title">10 Years On Mars: The Full Journey </h5>
+                        <p class="video-desc">Get ready to embark on an incredible interplanetary adventure with '10 Years On Mars.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIDEO 11 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=8jOBFRY3cxA', '_blank')">
+                    <div class="thumbnail-container">
+                        <img src="https://img.youtube.com/vi/8jOBFRY3cxA/maxresdefault.jpg" alt="Mars: The Red Planet">
+                        <div class="play-overlay"><div class="play-btn">▶</div></div>
+                    </div>
+                    <div class="video-info">
+                        <h5 class="video-title">Mars Once Had Oceans </h5>
+                        <p class="video-desc">Mars Once Had Oceans | Beyond Our Earth | Free Documentary Space</p>
+                    </div>
+                </div>
+            </div>
+
+             <!-- VIDEO 12 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=Yp3sc6OBv38', '_blank')">
+                    <div class="thumbnail-container">
+                        <img src="https://img.youtube.com/vi/Yp3sc6OBv38/maxresdefault.jpg" alt="Mars: The Red Planet">
+                        <div class="play-overlay"><div class="play-btn">▶</div></div>
+                    </div>
+                    <div class="video-info">
+                        <h5 class="video-title">Direct from the Moon</h5>
+                        <p class="video-desc">The first HD video of the moons surface beamed directly back from the moon.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIDEO 13 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=4Muc_M46a1s', '_blank')">
+                    <div class="thumbnail-container">
+                        <img src="https://img.youtube.com/vi/4Muc_M46a1s/maxresdefault.jpg" alt="Mars: The Red Planet">
+                        <div class="play-overlay"><div class="play-btn">▶</div></div>
+                    </div>
+                    <div class="video-info">
+                        <h5 class="video-title">Cosmos: Possible Worlds</h5>
+                        <p class="video-desc">"Cosmos: A Spacetime Odyssey"</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIDEO 14 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=UX41GAy_tFc', '_blank')">
+                    <div class="thumbnail-container">
+                        <img src="https://img.youtube.com/vi/UX41GAy_tFc/maxresdefault.jpg" alt="Mars: The Red Planet">
+                        <div class="play-overlay"><div class="play-btn">▶</div></div>
+                    </div>
+                    <div class="video-info">
+                        <h5 class="video-title">Are We Alone? The Search for Alien Life (Full Episode)</h5>
+                        <p class="video-desc">No longer waiting for the government to reveal everything they know about UFOs, citizen scientists and privately funded organizations are making advances in the search for alien life through data collection. </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIDEO 15 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=32B2HuMtSGE', '_blank')">
+                    <div class="thumbnail-container">
+                        <img src="https://img.youtube.com/vi/32B2HuMtSGE/maxresdefault.jpg" alt="Mars: The Red Planet">
+                        <div class="play-overlay"><div class="play-btn">▶</div></div>
+                    </div>
+                    <div class="video-info">
+                        <h5 class="video-title">Space Race (Full Episode)</h5>
+                        <p class="video-desc">Phil Keoghan visits a state-of-the-art observatory. Correspondents investigate Flat Earthers, human hibernation and meteorite trading. </p>
+                    </div>
+                </div>
+            </div>
+
+             <!-- VIDEO 16 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=dTIakqYYWRw', '_blank')">
+                    <div class="thumbnail-container">
+                        <img src="https://img.youtube.com/vi/dTIakqYYWRw/maxresdefault.jpg" alt="Mars: The Red Planet">
+                        <div class="play-overlay"><div class="play-btn">▶</div></div>
+                    </div>
+                    <div class="video-info">
+                        <h5 class="video-title">Sally Ride for Kids</h5>
+                        <p class="video-desc">Do you know who Sally Ride is? She was the very first American female astronaut to travel to space!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIDEO 17 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=GdeCxgNp11o', '_blank')">
+                    <div class="thumbnail-container">
+                        <img src="https://img.youtube.com/vi/GdeCxgNp11o/maxresdefault.jpg" alt="Mars: The Red Planet">
+                        <div class="play-overlay"><div class="play-btn">▶</div></div>
+                    </div>
+                    <div class="video-info">
+                        <h5 class="video-title">
+Experience the Universe's VIOLENT Extremes</h5>
+                        <p class="video-desc">From volcanoes to megastorms, watch as we travel through the universe's vast and violent extremes. </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIDEO 18 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=xT2ywken1SU', '_blank')">
+                    <div class="thumbnail-container">
+                        <img src="https://img.youtube.com/vi/xT2ywken1SU/maxresdefault.jpg" alt="Mars: The Red Planet">
+                        <div class="play-overlay"><div class="play-btn">▶</div></div>
+                    </div>
+                    <div class="video-info">
+                        <h5 class="video-title">Asteroids: Deadly Impact </h5>
+                        <p class="video-desc">Every year, millions of asteroids and comets or ''stray bullets'' streak through the skies, and tons of small meteorites strike our planet! </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIDEO 19 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=EzQjIl-uAgc', '_blank')">
+                    <div class="thumbnail-container">
+                        <img src="https://img.youtube.com/vi/EzQjIl-uAgc/maxresdefault.jpg" alt="Mars: The Red Planet">
+                        <div class="play-overlay"><div class="play-btn">▶</div></div>
+                    </div>
+                    <div class="video-info">
+                        <h5 class="video-title">The Moon's Mysteries Revealed | Ancient Aliens</h5>
+                        <p class="video-desc">Check out these mysterious moon theories.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIDEO 20 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=1WwGGuQljl4', '_blank')">
+                    <div class="thumbnail-container">
+                        <img src="https://img.youtube.com/vi/1WwGGuQljl4/maxresdefault.jpg" alt="Mars: The Red Planet">
+                        <div class="play-overlay"><div class="play-btn">▶</div></div>
+                    </div>
+                    <div class="video-info">
+                        <h5 class="video-title">UFOS: Investigating the Unknown</h5>
+                        <p class="video-desc">Secret Programs and Close Encounters | Nat Geo</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIDEO 21 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=w9UfJTAjIdk', '_blank')">
+                    <div class="thumbnail-container">
+                        <img src="https://img.youtube.com/vi/w9UfJTAjIdk/maxresdefault.jpg" alt="Mars: The Red Planet">
+                        <div class="play-overlay"><div class="play-btn">▶</div></div>
+                    </div>
+                    <div class="video-info">
+                        <h5 class="video-title">James Webb: Seeing the First Galaxies </h5>
+                        <p class="video-desc">Free Documentary Space</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIDEO 22 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=tiGHASY-1f4', '_blank')">
+                    <div class="thumbnail-container">
+                        <img src="https://img.youtube.com/vi/tiGHASY-1f4/maxresdefault.jpg" alt="Mars: The Red Planet">
+                        <div class="play-overlay"><div class="play-btn">▶</div></div>
+                    </div>
+                    <div class="video-info">
+                        <h5 class="video-title">Asteroids: Life And Death From Outer Space </h5>
+                        <p class="video-desc">Free Documentary Space</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIDEO 23 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=46ytcHhG_-8', '_blank')">
+                    <div class="thumbnail-container">
+                        <img src="https://img.youtube.com/vi/46ytcHhG_-8/maxresdefault.jpg" alt="Mars: The Red Planet">
+                        <div class="play-overlay"><div class="play-btn">▶</div></div>
+                    </div>
+                    <div class="video-info">
+                        <h5 class="video-title">Titan: Exploring Saturn’s Greatest Moon</h5>
+                        <p class="video-desc">Free Documentary Space</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIDEO 24 -->
+            <div class="col-md-6 col-lg-4">
+                <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=wHNC-RhmHZY', '_blank')">
+                    <div class="thumbnail-container">
+                        <img src="https://img.youtube.com/vi/wHNC-RhmHZY/maxresdefault.jpg" alt="Mars: The Red Planet">
+                        <div class="play-overlay"><div class="play-btn">▶</div></div>
+                    </div>
+                    <div class="video-info">
+                        <h5 class="video-title">James Webb's New Images of Neptune Have Left Scientists Confused</h5>
+                        <p class="video-desc">n this Supercut, we're exploring everything we know about the mysterious blue ice giant. </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+            <!-- ========================================== -->
+        <!-- COMING SOON TAG -->
+        <!-- ========================================== -->
+        <div class="row mt-5 mb-5">
+            <div class="col-12 text-center">
+                <div class="coming-soon-tag" onclick="window.location.href='index.html'">
+                    <span class="sparkle">✨</span>
+                    <span class="text">More Documentaries Coming Soon...</span>
+                    <span class="sparkle">✨</span>
+                </div>
+            </div>
+        </div>
+
+    <!-- Background Stars -->
+    <script>
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+        function initStars() {
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight; stars = [];
+            for (let i = 0; i < 300; i++) { stars.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, radius: Math.random() * 1.5, speed: Math.random() * 0.5 + 0.1 }); }
+        }
+        function animateStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = '#ffffff';
+            stars.forEach(star => { ctx.beginPath(); ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2); ctx.fill(); star.y -= star.speed; if (star.y < 0) { star.y = canvas.height; star.x = Math.random() * canvas.width; } });
+            requestAnimationFrame(animateStars);
+        }
+        window.addEventListener('resize', initStars); initStars(); animateStars();
+    </script>
+
+    <!-- Responsive Footer -->
+    <footer class="footer-custom mt-auto py-4">
+        <div class="container text-center">
+            <div class="row justify-content-center align-items-center">
+                <div class="col-md-6 mb-2 mb-md-0">
+                    <p class="mb-0 text-light">
+                        &copy; 2026 Solar System Explorer. All Rights Reserved.
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end text-center">
+                    <p class="mb-0 text-light">
+                        Powered by <a href="#" class="dev-link">Dev.Ankur</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/jpeg" href="./space-images/galaxy.jpg">
+    <title>Compare Planets - Solar System Explorer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { background-color: #050510; color: white; padding-bottom: 50px; font-family: 'Space Grotesk', sans-serif;}
+        #starfield { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; }
+        
+        .compare-container {
+            background: rgba(20, 25, 45, 0.7);
+            border: 1px solid #00d2ff;
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 30px rgba(0, 210, 255, 0.15);
+            margin-top: 90px;
+            margin-bottom: 50px;
+        }
+
+        /* Planet Images */
+        .planet-image-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .planet-image-container img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid #00d2ff;
+            box-shadow: 0 0 25px rgba(0, 210, 255, 0.5);
+            transition: transform 0.4s ease;
+        }
+        .planet-image-container img:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .planet-select {
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: 1px solid #00d2ff;
+            border-radius: 10px;
+            padding: 15px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            text-align: center;
+            cursor: pointer;
+        }
+        .planet-select:focus {
+            background: rgba(0, 0, 0, 0.9);
+            color: #00d2ff;
+            border-color: #00d2ff;
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.6);
+        }
+        .planet-select option { background: #0a1423; color: white; }
+
+        .vs-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ff0055;
+            text-shadow: 0 0 20px rgba(255, 0, 85, 0.8);
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        /* ===== DESKTOP TABLE DESIGN ===== */
+        .compare-table {
+            width: 100%;
+            margin-top: 30px;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+        }
+        .compare-table th, .compare-table td {
+            padding: 15px 20px;
+            text-align: center;
+            font-size: 1.1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(0, 210, 255, 0.1);
+            transition: all 0.3s;
+        }
+        .compare-table th {
+            color: #00d2ff;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            background: rgba(0, 210, 255, 0.1);
+            border: 1px solid rgba(0, 210, 255, 0.3);
+        }
+        .compare-table td:first-child {
+            text-align: left;
+            color: #00d2ff;
+            font-weight: bold;
+            width: 30%;
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 10px;
+        }
+        .compare-table td:nth-child(2), .compare-table td:nth-child(3) {
+            width: 35%;
+            font-weight: 600;
+            color: #eee;
+        }
+        .compare-table td:last-child {
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+
+        .winner {
+            color: #00ff88 !important;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+            background: rgba(0, 255, 136, 0.1) !important;
+            border-color: rgba(0, 255, 136, 0.5) !important;
+        }
+
+        /* ===== RESPONSIVE MOBILE TABLE DESIGN (FIXED) ===== */
+        @media (max-width: 768px) {
+            .compare-container { padding: 15px; margin-top: 80px; }
+            .planet-image-container img { width: 100px; height: 100px; }
+            .vs-text { font-size: 1.8rem; margin: 10px 0; }
+            .planet-select { padding: 10px; font-size: 1rem; }
+            
+            .compare-table { display: block; border-spacing: 0; }
+            .compare-table thead { display: none; }
+            .compare-table tbody { display: flex; flex-direction: column; gap: 15px; }
+            
+            .compare-table tr { 
+                display: flex; 
+                flex-direction: column;
+                background: rgba(0, 210, 255, 0.05);
+                border: 1px solid rgba(0, 210, 255, 0.3);
+                border-radius: 10px;
+                padding: 15px;
+                margin-bottom: 10px;
+            }
+            
+            .compare-table td { 
+                display: flex; 
+                justify-content: space-between; 
+                align-items: center;
+                border: none; 
+                padding: 8px 0;
+                font-size: 1rem;
+                width: 100% !important;
+            }
+            
+            /* Feature Title */
+            .compare-table td:first-child { 
+                display: block;
+                text-align: left;
+                color: #00d2ff;
+                font-weight: bold;
+                font-family: 'Orbitron', sans-serif;
+                border-bottom: 1px solid rgba(0, 210, 255, 0.3);
+                padding-bottom: 10px;
+                margin-bottom: 10px;
+                width: 100% !important;
+            }
+            
+            /* Planet Names beside values */
+            .compare-table td:nth-child(2)::before { 
+                content: attr(data-planet1); 
+                color: #00d2ff; 
+                font-weight: bold; 
+                font-size: 0.9rem;
+                margin-right: 10px;
+            }
+            .compare-table td:nth-child(3)::before { 
+                content: attr(data-planet2); 
+                color: #ff0055; 
+                font-weight: bold; 
+                font-size: 0.9rem;
+                margin-right: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="starfield"></canvas>
+
+    <nav class="navbar navbar-dark bg-dark-transparent fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">← Back to Home</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="compare-container">
+            <h1 class="glow-text text-center mb-5" style="font-family: 'Orbitron', sans-serif; color: #00d2ff; text-shadow: 0 0 20px #00d2ff;">PLANET BATTLE</h1>
+            
+            <div class="row align-items-center mb-4">
+                <!-- Planet 1 Column -->
+                <div class="col-md-5">
+                    <div class="planet-image-container">
+                        <img id="img1" src="./images/earth.jpg" alt="Planet 1">
+                    </div>
+                    <select id="planet1" class="form-select planet-select" onchange="updateComparison()">
+                        <option value="Earth">Earth</option>
+                        <option value="Mars">Mars</option>
+                        <option value="Jupiter">Jupiter</option>
+                        <option value="Saturn">Saturn</option>
+                        <option value="Venus">Venus</option>
+                        <option value="Mercury">Mercury</option>
+                        <option value="Uranus">Uranus</option>
+                        <option value="Neptune">Neptune</option>
+                    </select>
+                </div>
+                
+                <!-- VS Text -->
+                <div class="col-md-2">
+                    <div class="vs-text">VS</div>
+                </div>
+                
+                <!-- Planet 2 Column -->
+                <div class="col-md-5">
+                    <div class="planet-image-container">
+                        <img id="img2" src="./images/jupiter.jpg" alt="Planet 2">
+                    </div>
+                    <select id="planet2" class="form-select planet-select" onchange="updateComparison()">
+                        <option value="Jupiter">Jupiter</option>
+                        <option value="Earth">Earth</option>
+                        <option value="Mars">Mars</option>
+                        <option value="Saturn">Saturn</option>
+                        <option value="Venus">Venus</option>
+                        <option value="Mercury">Mercury</option>
+                        <option value="Uranus">Uranus</option>
+                        <option value="Neptune">Neptune</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Comparison Table -->
+            <table class="compare-table" id="compareTable">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th id="header1">Earth</th>
+                        <th id="header2">Jupiter</th>
+                    </tr>
+                </thead>
+                <tbody id="compareBody">
+                    <!-- Data injected by JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Data Script -->
+    <script>
+        const planetData = {
+            "Mercury": { size: "2,439.7 km", mass: "3.30 × 10²³ kg", gravity: "3.70 m/s²", moons: 0, day: "58.6 Earth days", year: "88 Earth days", temp: "+430°C to -180°C", type: "Terrestrial" },
+            "Venus": { size: "6,051.8 km", mass: "4.87 × 10²⁴ kg", gravity: "8.87 m/s²", moons: 0, day: "243 Earth days", year: "225 Earth days", temp: "465°C", type: "Terrestrial" },
+            "Earth": { size: "6,371.0 km", mass: "5.97 × 10²⁴ kg", gravity: "9.807 m/s²", moons: 1, day: "23h 56m", year: "365.25 days", temp: "Avg -15°C", type: "Terrestrial" },
+            "Mars": { size: "3,389.5 km", mass: "6.42 × 10²³ kg", gravity: "3.72 m/s²", moons: 2, day: "24h 37m", year: "687 Earth days", temp: "Avg -60°C", type: "Terrestrial" },
+            "Jupiter": { size: "69,911 km", mass: "1.898 × 10²⁷ kg", gravity: "24.79 m/s²", moons: 95, day: "9h 56m", year: "11.86 Earth years", temp: "Cloud tops -110°C", type: "Gas Giant" },
+            "Saturn": { size: "58,232 km", mass: "5.68 × 10²⁶ kg", gravity: "10.44 m/s²", moons: 146, day: "10h 33m", year: "29.45 Earth years", temp: "Cloud tops -140°C", type: "Gas Giant" },
+            "Uranus": { size: "25,362 km", mass: "8.68 × 10²⁵ kg", gravity: "8.69 m/s²", moons: 28, day: "17h 14m", year: "84.0 Earth years", temp: "-224°C", type: "Ice Giant" },
+            "Neptune": { size: "24,622 km", mass: "1.024 × 10²⁶ kg", gravity: "11.15 m/s²", moons: 16, day: "16h 6m", year: "164.8 Earth years", temp: "-214°C", type: "Ice Giant" }
+        };
+
+        function updateComparison() {
+            const p1 = document.getElementById('planet1').value;
+            const p2 = document.getElementById('planet2').value;
+            const data1 = planetData[p1];
+            const data2 = planetData[p2];
+
+            // Update Images
+            document.getElementById('img1').src = `./images/${p1.toLowerCase()}.jpg`;
+            document.getElementById('img2').src = `./images/${p2.toLowerCase()}.jpg`;
+
+            // Update Headers
+            document.getElementById('header1').innerText = p1;
+            document.getElementById('header2').innerText = p2;
+
+            const tbody = document.getElementById('compareBody');
+            tbody.innerHTML = '';
+
+            // Helper function to create a row
+            function createRow(label, val1, val2, winner = 0) {
+                let class1 = winner === 1 ? "winner" : "";
+                let class2 = winner === 2 ? "winner" : "";
+                // data-planet1 and data-planet2 attributes are for mobile view labels
+                return `<tr>
+                    <td>${label}</td>
+                    <td class="${class1}" data-planet1="${p1}: ">${val1}</td>
+                    <td class="${class2}" data-planet2="${p2}: ">${val2}</td>
+                </tr>`;
+            }
+
+            // Add Rows
+            tbody.innerHTML += createRow("Type", data1.type, data2.type);
+            tbody.innerHTML += createRow("Radius / Size", data1.size, data2.size);
+            tbody.innerHTML += createRow("Mass", data1.mass, data2.mass);
+            tbody.innerHTML += createRow("Gravity", data1.gravity, data2.gravity);
+            tbody.innerHTML += createRow("Moons", data1.moons, data2.moons, data1.moons > data2.moons ? 1 : (data2.moons > data1.moons ? 2 : 0));
+            tbody.innerHTML += createRow("Day Length", data1.day, data2.day);
+            tbody.innerHTML += createRow("Year Length", data1.year, data2.year);
+            tbody.innerHTML += createRow("Temperature", data1.temp, data2.temp);
+        }
+
+        // Load comparison on page load
+        window.addEventListener('load', updateComparison);
+    </script>
+    
+    <!-- Background Stars -->
+    <script>
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+        function initStars() {
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight; stars = [];
+            for (let i = 0; i < 300; i++) { stars.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, radius: Math.random() * 1.5, speed: Math.random() * 0.5 + 0.1 }); }
+        }
+        function animateStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = '#ffffff';
+            stars.forEach(star => { ctx.beginPath(); ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2); ctx.fill(); star.y -= star.speed; if (star.y < 0) { star.y = canvas.height; star.x = Math.random() * canvas.width; } });
+            requestAnimationFrame(animateStars);
+        }
+        window.addEventListener('resize', initStars); initStars(); animateStars();
+    </script>
+
+    <!-- Web inspect Off code -->
+     <script>
+    // 1. Right Click Block
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+    });
+
+    // 2. F12 ar Developer Tools Shortcut Block
+    document.addEventListener('keydown', function(e) {
+        if (e.key === "F12" || e.keyCode === 123) {
+            e.preventDefault();
+            return false;
+        }
+        
+        if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C' || e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
+            e.preventDefault();
+            return false;
+        }
+
+        if (e.ctrlKey && (e.key === 'U' || e.keyCode === 85)) {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+    // 3. Extra Security
+    setInterval(function() {
+        debugger; 
+    }, 1000); 
+    
+    document.addEventListener('copy', function(e) {
+        e.preventDefault();
+        alert("Copying is disabled on this website.");
+    });
+</script>
+
+ <!-- Responsive Footer -->
+    <footer class="footer-custom mt-auto py-4">
+        <div class="container text-center">
+            <div class="row justify-content-center align-items-center">
+                <div class="col-md-6 mb-2 mb-md-0">
+                    <p class="mb-0 text-light">
+                        &copy; 2026 Solar System Explorer. All Rights Reserved.
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end text-center">
+                    <p class="mb-0 text-light">
+                        Powered by <a href="#" class="dev-link">Dev.Ankur</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

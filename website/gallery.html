@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/jpeg" href="./space-images/galaxy.jpg">
+    <title>Space Photo Gallery - Solar System Explorer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { background-color: #050510; color: white; padding-bottom: 50px; font-family: 'Space Grotesk', sans-serif;}
+        #starfield { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; }
+
+        .page-title {
+            font-family: 'Orbitron', sans-serif;
+            color: #00d2ff; text-shadow: 0 0 20px rgba(0, 210, 255, 0.6);
+            text-align: center; margin-top: 80px; margin-bottom: 40px;
+        }
+
+        /* Photo Card Design */
+        .photo-card {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            border: 1px solid rgba(0, 210, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 24px; 
+        }
+
+        .photo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 210, 255, 0.3);
+            border-color: #00d2ff;
+        }
+
+        .photo-card img {
+            width: 100%;
+            height: 250px; 
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .photo-card:hover img {
+            transform: scale(1.05);
+        }
+
+        /* Gradient Overlay */
+        .photo-overlay {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0) 100%);
+            padding: 20px;
+            pointer-events: none;
+        }
+
+        .photo-title {
+            font-family: 'Orbitron', sans-serif;
+            color: #00d2ff;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .photo-source {
+            font-size: 0.8rem;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* ========================================== */
+        /* MODAL CUSTOMIZATION (FULL SCREEN IMAGE)    */
+        /* ========================================== */
+        .modal-content {
+            background: rgba(10, 15, 30, 0.98);
+            border: 1px solid #00d2ff;
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        .modal-header {
+            border-bottom: 1px solid rgba(0, 210, 255, 0.2);
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.5);
+        }
+        .modal-title {
+            font-family: 'Orbitron', sans-serif;
+            color: #00d2ff;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .modal-body {
+            padding: 0; 
+        }
+        .modal-img {
+            width: 100%;
+            max-height: 80vh; 
+            object-fit: contain; 
+            display: block;
+            margin: 0 auto;
+            background: #000;
+        }
+        .modal-desc-box {
+            padding: 20px 25px;
+            background: rgba(0, 0, 0, 0.7);
+            border-top: 1px solid rgba(0, 210, 255, 0.2);
+        }
+        
+        /* Download Button */
+        .btn-download {
+            background: #00d2ff;
+            color: #000;
+            font-weight: bold;
+            border-radius: 8px;
+            padding: 10px 25px;
+            transition: 0.3s;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .btn-download:hover {
+            background: #fff;
+            box-shadow: 0 0 15px #00d2ff;
+            color: #00d2ff;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="starfield"></canvas>
+
+    <nav class="navbar navbar-dark bg-dark-transparent fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">← Back to Home</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 class="page-title"> Cosmos Photo Gallery</h1>
+        
+        <div class="row" id="galleryGrid">
+            <!-- Photos will be injected here by JS -->
+        </div>
+    </div>
+
+    <!-- Modal for Full Image -->
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Image Title</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="modalImage" class="modal-img" src="" alt="Space Image">
+                    
+                    <!-- Description Box -->
+                    <div class="modal-desc-box text-start">
+                        <p id="modalDesc" class="text-light fs-5 mb-3"></p>
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <p id="modalSource" class="text-info mb-0 fw-bold"></p>
+                            <a id="downloadBtn" href="#" download class="btn btn-download">⬇ Download HD</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // ==========================================
+        // --- PHOTO DATA (28 Images + English Descriptions) ---
+        // ==========================================
+        const photoData = [
+            { url: "./space-images/pillars.jpg", title: "Pillars of Creation", source: "NASA / Hubble", description: "This iconic image from the Eagle Nebula shows towering columns of interstellar gas and dust where new stars are being born." },
+            { url: "./space-images/deepfield.jpg", title: "Webb's First Deep Field", source: "NASA / James Webb", description: "The first deep field image taken by the James Webb Space Telescope. The thousands of tiny dots are entire galaxies." },
+            { url: "./space-images/carina.jpg", title: "Cosmic Cliffs (Carina Nebula)", source: "NASA / James Webb", description: "A breathtaking view of the Cosmic Cliffs in the Carina Nebula, revealing the earliest phases of star formation." },
+            { url: "./space-images/andromeda.jpg", title: "Andromeda Galaxy", source: "NASA / GALEX", description: "The Andromeda Galaxy is our closest large galactic neighbor, showing regions where new, hot stars are actively forming." },
+            { url: "./space-images/saturn-aurora.jpg", title: "Saturn's Aurora", source: "NASA / Hubble", description: "A stunning view of the auroras at Saturn's north pole, beautifully capturing the planet's iconic rings." },
+            { url: "./space-images/earth.jpg", title: "The Blue Marble", source: "NASA / Apollo 17", description: "Taken in 1972 during the Apollo 17 mission, this is the first clear photograph of the fully illuminated Earth." },
+            { url: "./space-images/jupiter.jpg", title: "Jupiter's Great Red Spot", source: "NASA / Juno", description: "This image shows Jupiter's Great Red Spot, a massive storm that has been raging for over 350 years." },
+            { url: "./space-images/blackhole.jpg", title: "Black Hole Accretion Disk", source: "NASA / JPL-Caltech", description: "An artist's impression of a supermassive black hole surrounded by a glowing accretion disk, based on real data." },
+
+            { url: "./space-images/horsehead.jpg", title: "Horsehead Nebula", source: "NASA / Hubble", description: "A dark cloud of dust and gas in the constellation Orion, shaped like a horse's head, backlit by glowing hydrogen." },
+            { url: "./space-images/crab.jpg", title: "Crab Nebula", source: "NASA / Hubble", description: "The remnant of a supernova explosion that was observed in 1054 AD. It contains a rapidly spinning neutron star at its center." },
+            { url: "./space-images/orion.jpg", title: "Orion Nebula", source: "NASA / Hubble", description: "One of the brightest nebulae visible to the naked eye, located 1,344 light-years away in the constellation Orion." },
+            { url: "./space-images/ring-nebula.jpg", title: "Ring Nebula", source: "NASA / Hubble", description: "A planetary nebula formed by a dying star shedding its outer layers, creating a glowing ring of gas in space." },
+            { url: "./space-images/helix.jpg", title: "Helix Nebula", source: "NASA / Hubble", description: "One of the closest planetary nebulae to Earth, often called the Eye of God due to its striking resemblance to a giant eye." },
+            { url: "./space-images/lagoon.jpg", title: "Lagoon Nebula", source: "NASA / Hubble", description: "A giant interstellar cloud in the constellation Sagittarius, known for its intense star-forming regions and glowing gas." },
+            { url: "./space-images/whirlpool.jpg", title: "Whirlpool Galaxy", source: "NASA / Hubble", description: "A classic spiral galaxy interacting with a smaller companion galaxy, located 23 million light-years away." },
+            { url: "./space-images/sombrero.jpg", title: "Sombrero Galaxy", source: "NASA / Hubble", description: "An unusual galaxy with a bright central bulge and a dark dust lane, resembling a Mexican sombrero hat." },
+            { url: "./space-images/antennae.jpg", title: "Antennae Galaxies", source: "NASA / Hubble", description: "Two colliding galaxies (NGC 4038 and NGC 4039) that are in the process of merging, creating long antennae of stars and gas." },
+            { url: "./space-images/milkyway.jpg", title: "Milky Way Core", source: "NASA / Hubble", description: "A dense and brilliant view of the center of our own galaxy, filled with millions of stars and massive clouds of gas." },
+            { url: "./space-images/neptune.jpg", title: "Neptune", source: "NASA / Voyager 2", description: "The eighth and farthest known planet from the Sun, known for its deep blue color and strong winds." },
+            { url: "./space-images/uranus.jpg", title: "Uranus", source: "NASA / Voyager 2", description: "An ice giant planet that rotates on its side, giving it a unique tilt compared to other planets in the solar system." },
+            { url: "./space-images/venus.jpg", title: "Venus", source: "NASA / Mariner 10", description: "The second planet from the Sun, shrouded in thick clouds of sulfuric acid, making it the hottest planet in our solar system." },
+            { url: "./space-images/mars.jpg", title: "Mars", source: "NASA / Hubble", description: "The fourth planet from the Sun, often called the Red Planet due to its reddish appearance caused by iron oxide." },
+            { url: "./space-images/mercury.jpg", title: "Mercury", source: "NASA / MESSENGER", description: "The smallest and closest planet to the Sun, with a heavily cratered surface and extreme temperature variations." },
+            { url: "./space-images/titan.jpg", title: "Titan", source: "NASA / Cassini", description: "Saturn's largest moon, known for its thick atmosphere and lakes of liquid methane and ethane on its surface." },
+            { url: "./space-images/europa.jpg", title: "Europa", source: "NASA / Galileo", description: "One of Jupiter's moons, covered in a layer of ice with a vast ocean underneath, making it a prime candidate for extraterrestrial life." },
+            { url: "./space-images/pluto.jpg", title: "Pluto", source: "NASA / New Horizons", description: "A dwarf planet in the Kuiper belt, known for its iconic heart-shaped glacier and icy mountains." },
+            { url: "./space-images/sun.jpg", title: "The Sun", source: "NASA / SDO", description: "The star at the center of our solar system, a nearly perfect sphere of hot plasma that provides light and heat to Earth." },
+            { url: "./space-images/moon.jpg", title: "Earth's Moon", source: "NASA / Apollo", description: "The only natural satellite of Earth, with a surface covered in craters and dark plains called maria." },
+                        // --- 2 New Galaxy Events ---
+            { 
+                url: "./space-images/galaxy-collision.jpg", 
+                title: "Galactic Collision (Antennae Galaxies)", 
+                source: "NASA / Hubble", 
+                description: "A spectacular cosmic event where two galaxies are colliding and merging. The collision has triggered intense bursts of star formation, creating long tidal tails of stars and gas that resemble insect antennae." 
+            },
+            { 
+                url: "./space-images/quasar-jet.jpg", 
+                title: "Quasar Jet (M87 Black Hole)", 
+                source: "NASA / Hubble", 
+                description: "A powerful jet of superheated plasma and energy blasting out from the center of a galaxy. This high-energy event is powered by the immense gravitational pull of a supermassive black hole." 
+            }
+        ];
+
+        const galleryGrid = document.getElementById('galleryGrid');
+
+        // ==========================================
+        // --- RENDER PHOTOS (FIXED) ---
+        // ==========================================
+        photoData.forEach((photo, index) => {
+            const cardHTML = `
+                <div class="col-md-6 col-lg-4">
+                    <!-- Ekane direct data pathano hoyni, index pathano hoyeche -->
+                    <div class="photo-card" data-index="${index}">
+                        <img src="${photo.url}" alt="${photo.title}" loading="lazy">
+                        <div class="photo-overlay">
+                            <div class="photo-title">${photo.title}</div>
+                            <div class="photo-source">${photo.source}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            galleryGrid.innerHTML += cardHTML;
+        });
+
+        // ==========================================
+        // --- CLICK EVENT LISTENER (THE FIX) ---
+        // ==========================================
+        document.querySelectorAll('.photo-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const index = this.getAttribute('data-index');
+                const photo = photoData[index];
+                openModal(photo.url, photo.title, photo.description, photo.source);
+            });
+        });
+
+        // Open Modal Function
+        function openModal(url, title, desc, source) {
+            document.getElementById('modalImage').src = url;
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalDesc').innerText = desc;
+            document.getElementById('modalSource').innerText = `Credit: ${source}`;
+            
+            // Download button link set kora
+            const downloadBtn = document.getElementById('downloadBtn');
+            downloadBtn.href = url;
+            downloadBtn.setAttribute('download', title.replace(/\s+/g, '-').toLowerCase() + '.jpg');
+            
+            const modal = new bootstrap.Modal(document.getElementById('imageModal'));
+            modal.show();
+        }
+    </script>
+
+    <!-- Background Stars -->
+    <script>
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+        function initStars() {
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight; stars = [];
+            for (let i = 0; i < 300; i++) { stars.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, radius: Math.random() * 1.5, speed: Math.random() * 0.5 + 0.1 }); }
+        }
+        function animateStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = '#ffffff';
+            stars.forEach(star => { ctx.beginPath(); ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2); ctx.fill(); star.y -= star.speed; if (star.y < 0) { star.y = canvas.height; star.x = Math.random() * canvas.width; } });
+            requestAnimationFrame(animateStars);
+        }
+        window.addEventListener('resize', initStars); initStars(); animateStars();
+    </script>
+</body>
+</html>

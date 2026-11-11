@@ -1,0 +1,181 @@
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Space+Grotesk:wght@300;400;600&display=swap');
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #050510;
+    color: #ffffff;
+    font-family: 'Space Grotesk', sans-serif;
+    overflow-x: hidden;
+}
+
+/* Background Canvas */
+#starfield {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+}
+
+/* Navbar */
+.bg-dark-transparent {
+    background-color: rgba(5, 5, 16, 0.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.navbar-brand {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: bold;
+    color: #00d2ff !important;
+}
+
+/* Hero Section */
+.hero-section {
+    padding: 180px 0 100px 0;
+}
+
+.glow-text {
+    font-family: 'Orbitron', sans-serif;
+    text-shadow: 0 0 10px rgba(0, 210, 255, 0.7), 0 0 20px rgba(0, 210, 255, 0.5);
+}
+
+/* Planet Cards */
+.planet-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 25px 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+.planet-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 15px 30px rgba(0, 210, 255, 0.2);
+    border-color: #00d2ff;
+}
+
+.planet-card img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 20px;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.planet-card:hover img {
+    transform: rotate(15deg);
+}
+
+.planet-card h4 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2rem;
+    color: #e0e0e0;
+    margin-bottom: 10px;
+    margin-top: 0;
+    z-index: 2;
+}
+
+/* Notun class jeta ami script.js e use korechi */
+.planet-type-text {
+    font-size: 0.85rem;
+    color: #9ca3af; /* Halka grey color jate dark background e dekha jay */
+    margin: 0;
+    z-index: 2;
+}
+
+/* Modal Adjustments */
+.modal-content {
+    background: rgba(10, 10, 25, 0.95);
+    backdrop-filter: blur(15px);
+    border: 1px solid #00d2ff;
+    box-shadow: 0 0 30px rgba(0, 210, 255, 0.2);
+}
+
+.planet-modal-img {
+    max-width: 100%;
+    border-radius: 50%;
+    box-shadow: 0 0 30px rgba(0, 210, 255, 0.4);
+    margin-top: 20px;
+}
+
+.detail-row {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 8px 0;
+    font-size: 0.95rem;
+}
+
+.detail-label {
+    color: #00d2ff;
+    font-weight: 600;
+}
+
+/* 3D Simulation Box */
+.simulation-box {
+    width: 100%;
+    max-width: 900px;
+    height: 500px;
+    border: 2px solid #00d2ff;
+    border-radius: 15px;
+    box-shadow: 0 0 25px rgba(0, 210, 255, 0.3);
+    overflow: hidden;
+    position: relative;
+    background: #000;
+}
+
+#canvas-container canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none; /* Prevents scrolling while dragging on mobile */
+}
+
+/* Adjust height for mobile screens */
+@media (max-width: 768px) {
+    .simulation-box {
+        height: 350px;
+    }
+}
+
+/* --- Footer Styling --- */
+.footer-custom {
+    background: rgba(5, 5, 16, 0.9); /* Dark glass effect */
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(0, 210, 255, 0.2);
+    position: relative;
+    z-index: 10;
+    width: 100%;
+}
+
+.footer-custom p {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+    color: #aaaaaa !important;
+}
+
+.dev-link {
+    color: #00d2ff;
+    text-decoration: none;
+    font-weight: bold;
+    font-family: 'Orbitron', sans-serif;
+    transition: all 0.3s ease;
+    text-shadow: 0 0 5px rgba(0, 210, 255, 0.5);
+}
+
+.dev-link:hover {
+    color: #ffffff;
+    text-shadow: 0 0 10px #00d2ff, 0 0 20px #00d2ff;
+    text-decoration: none;
+}
