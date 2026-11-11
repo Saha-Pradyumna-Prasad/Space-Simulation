@@ -1,0 +1,52 @@
+#ifndef SPACESIM_RENDER_GL_API_H
+#define SPACESIM_RENDER_GL_API_H
+
+#ifdef _WIN32
+#include <windows.h>
+#endif
+#include <GL/gl.h>
+#include <GL/glext.h>
+
+namespace glapi {
+
+extern PFNGLGENVERTEXARRAYSPROC GenVertexArrays;
+extern PFNGLBINDVERTEXARRAYPROC BindVertexArray;
+extern PFNGLDELETEVERTEXARRAYSPROC DeleteVertexArrays;
+extern PFNGLGENBUFFERSPROC GenBuffers;
+extern PFNGLBINDBUFFERPROC BindBuffer;
+extern PFNGLBUFFERDATAPROC BufferData;
+extern PFNGLBUFFERSUBDATAPROC BufferSubData;
+extern PFNGLDELETEBUFFERSPROC DeleteBuffers;
+extern PFNGLENABLEVERTEXATTRIBARRAYPROC EnableVertexAttribArray;
+extern PFNGLDISABLEVERTEXATTRIBARRAYPROC DisableVertexAttribArray;
+extern PFNGLVERTEXATTRIBPOINTERPROC VertexAttribPointer;
+extern PFNGLVERTEXATTRIBDIVISORPROC VertexAttribDivisor;
+extern PFNGLCREATESHADERPROC CreateShader;
+extern PFNGLSHADERSOURCEPROC ShaderSource;
+extern PFNGLCOMPILESHADERPROC CompileShader;
+extern PFNGLGETSHADERIVPROC GetShaderiv;
+extern PFNGLGETSHADERINFOLOGPROC GetShaderInfoLog;
+extern PFNGLDELETESHADERPROC DeleteShader;
+extern PFNGLCREATEPROGRAMPROC CreateProgram;
+extern PFNGLATTACHSHADERPROC AttachShader;
+extern PFNGLLINKPROGRAMPROC LinkProgram;
+extern PFNGLGETPROGRAMIVPROC GetProgramiv;
+extern PFNGLGETPROGRAMINFOLOGPROC GetProgramInfoLog;
+extern PFNGLUSEPROGRAMPROC UseProgram;
+extern PFNGLDELETEPROGRAMPROC DeleteProgram;
+extern PFNGLGETUNIFORMLOCATIONPROC GetUniformLocation;
+extern PFNGLUNIFORM1IPROC Uniform1i;
+extern PFNGLUNIFORM1FPROC Uniform1f;
+extern PFNGLUNIFORM2FPROC Uniform2f;
+extern PFNGLUNIFORM3FPROC Uniform3f;
+extern PFNGLUNIFORM4FPROC Uniform4f;
+extern PFNGLUNIFORMMATRIX4FVPROC UniformMatrix4fv;
+extern PFNGLDRAWELEMENTSINSTANCEDPROC DrawElementsInstanced;
+extern PFNGLDRAWARRAYSINSTANCEDPROC DrawArraysInstanced;
+extern PFNGLACTIVETEXTUREPROC ActiveTexture;
+
+bool load();
+
+} // namespace glapi
+
+#endif
