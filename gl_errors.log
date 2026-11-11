@@ -1,0 +1,29 @@
+Space Simulator v3.5 OpenGL diagnostics
+time: Wed Nov 11 21:39:46 2026
+GL_VENDOR: Intel
+GL_RENDERER: Intel(R) HD Graphics 520
+GL_VERSION: 3.3.0 - Build 31.0.101.2111
+GL_SHADING_LANGUAGE_VERSION: 3.30 - Build 31.0.101.2111
+context profile: core (0x1)
+MSAA samples: 4
+
+--- lit (procedural bodies) ---
+OK
+
+--- lit fallback ---
+OK
+
+--- color lines ---
+OK
+
+--- point sprites ---
+OK
+
+--- glow sprites ---
+OK
+
+--- Saturn ring ---
+OK
+
+--- star halo ---
+OK
