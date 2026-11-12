@@ -12,10 +12,24 @@
 
     <canvas id="starfield"></canvas>
 
-    <nav class="navbar navbar-dark bg-dark-transparent fixed-top">
+        <nav class="navbar navbar-dark bg-dark-transparent fixed-top">
         <div class="container">
+            <!-- Logo -->
             <a class="navbar-brand" href="#">🌌 Solar System Explorer</a>
-            <button class="btn btn-outline-info" onclick="openSimulation()">🚀 Download PC Simulator Game</button>
+            
+            <!-- Buttons (Right side) -->
+            <div class="d-flex align-items-center gap-2 gap-md-3">
+                <!-- User Guide Button -->
+                <a href="guide.html" class="btn btn-outline-success fw-bold shadow-sm" style="font-family: 'Orbitron', sans-serif; border-radius: 8px;">
+                    📖 <span class="d-none d-sm-inline">User Guide</span>
+                </a>
+                
+                <!-- PC Simulator Button -->
+                <button class="btn btn-outline-info fw-bold shadow-sm" onclick="openSimulation()" style="font-family: 'Orbitron', sans-serif; border-radius: 8px;">
+                    🚀 <span class="d-none d-sm-inline">Download PC Simulator</span>
+                    <span class="d-inline d-sm-none">PC Game</span>
+                </button>
+            </div>
         </div>
     </nav>
 
@@ -31,7 +45,7 @@
         <a href="videos.html" class="btn btn-danger btn-lg mt-3 px-4 fw-bold shadow">🎥 Watch Space Documentery</a>
         <a href="gallery.html" class="btn btn-primary btn-lg mt-3 px-4 fw-bold shadow">📸 Captured Space Photos</a><br>
                 <!-- Space Shooter Game Button -->
-        <a href="./space-shooter/" class="btn btn-warning btn-lg mt-3 px-4 fw-bold shadow" style="background: linear-gradient(45deg, #ff0055, #ffaa00); border: none; color: #fff;">🚀 Play Space Shooter Game</a>
+        <a href="./space-shooter/shoot.html" class="btn btn-warning btn-lg mt-3 px-4 fw-bold shadow" style="background: linear-gradient(45deg, #ff0055, #ffaa00); border: none; color: #fff;">🚀 Play Space Shooter Game</a>
     </header>
 
     <section id="planets" class="container py-5">
@@ -55,7 +69,7 @@
                     </h3>
                     
                     <p class="text-info fs-5 mb-4">
-                        Take on the ultimate Cosmic Challenge with <strong>50 fun questions</strong>. Track your progress, build streaks, and earn your official Space Rank!
+                        Take on the ultimate Cosmic Challenge with <strong>50 fun questions</strong>. Track your progress, build streaks and earn your official Space Rank!
                     </p>
                     
                     <!-- The Link to quiz.html -->
