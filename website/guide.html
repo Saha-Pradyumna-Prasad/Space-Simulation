@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/jpeg" href="./space-images/galaxy.jpg">
+    <title>User Guide - Solar System Explorer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Grotesk:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        body {
+            background-color: #02040a;
+            color: #ffffff;
+            font-family: 'Space Grotesk', sans-serif;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(0, 210, 255, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(138, 43, 226, 0.05) 0%, transparent 50%);
+        }
+
+        /* Navbar */
+        .navbar {
+            background: rgba(5, 10, 20, 0.85);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(0, 210, 255, 0.2);
+        }
+        .navbar-brand {
+            font-family: 'Orbitron', sans-serif;
+            color: #00d2ff !important;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .nav-link {
+            color: #a0aec0 !important;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #00d2ff !important;
+            text-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+        }
+
+        /* Page Title */
+        .page-header {
+            text-align: center;
+            padding: 120px 20px 50px;
+        }
+        .page-header h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, #00d2ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 210, 255, 0.3);
+            margin-bottom: 15px;
+        }
+        .page-header p {
+            color: #a0aec0;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Guide Cards */
+        .guide-card {
+            background: rgba(15, 25, 45, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 210, 255, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            height: 100%;
+        }
+        .guide-card:hover {
+            transform: translateY(-5px);
+            border-color: #00d2ff;
+            box-shadow: 0 15px 40px rgba(0, 210, 255, 0.15);
+        }
+        .guide-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: inline-block;
+            filter: drop-shadow(0 0 15px rgba(255,255,255,0.2));
+        }
+        .guide-title {
+            font-family: 'Orbitron', sans-serif;
+            color: #00d2ff;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        .guide-text {
+            color: #cbd5e1;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        .guide-list {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 20px;
+        }
+        .guide-list li {
+            position: relative;
+            padding-left: 25px;
+            margin-bottom: 10px;
+            color: #94a3b8;
+            font-size: 0.95rem;
+        }
+        .guide-list li::before {
+            content: '▹';
+            position: absolute;
+            left: 0;
+            color: #00ff88;
+            font-size: 1.2rem;
+            line-height: 1;
+        }
+        .guide-list strong {
+            color: #fff;
+        }
+        
+        /* Buttons inside cards */
+        .btn-launch {
+            background: linear-gradient(135deg, #00d2ff, #0055ff);
+            color: #fff;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-decoration: none;
+            transition: 0.3s;
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+            display: inline-block;
+        }
+        .btn-launch:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(0, 210, 255, 0.8);
+            color: #fff;
+        }
+
+        /* --- Footer Styling --- */
+.footer-custom {
+    background: rgba(5, 5, 16, 0.9); /* Dark glass effect */
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(0, 210, 255, 0.2);
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    padding-left: 15px; 
+            padding-right: 15px;
+            font-size: 0.85rem;
+}
+
+.footer-custom p {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+    color: #aaaaaa !important;
+}
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">🌌 Solar System Explorer</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="guide.html">User Guide</a></li>
+                    <li class="nav-item"><a class="nav-link" href="quiz.html">Quiz</a></li>
+                    <li class="nav-item"><a class="nav-link" href="gallery.html">Gallery</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>🚀 User Guide & Features</h1>
+        <p>Welcome to the ultimate space exploration experience. Here is everything you need to know to navigate, learn and play on this website.</p>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container pb-5">
+        <div class="row g-4">
+            
+            <!-- 3D Simulation -->
+            <div class="col-md-6">
+                <div class="guide-card">
+                    <div class="guide-icon">🪐</div>
+                    <h3 class="guide-title">3D Solar System Simulation</h3>
+                    <p class="guide-text">Explore our solar system in full 3D. Learn about planets, moons and their orbits in real-time.</p>
+                    <ul class="guide-list">
+                        <li><strong>Navigation:</strong> Click and drag to rotate the camera. Scroll or pinch to zoom in/out.</li>
+                        <li><strong>Information:</strong> Click on any planet or moon to read its scientific data.</li>
+                        <li><strong>Controls:</strong> Toggle Orbit lines, Asteroid belts and Space dust using the bottom menu.</li>
+                    </ul>
+                    <a href="simulation.html" class="btn-launch">Launch 3D Simulation</a>
+                </div>
+            </div>
+
+            <!-- Earth 3D -->
+            <div class="col-md-6">
+                <div class="guide-card">
+                    <div class="guide-icon">🌍</div>
+                    <h3 class="guide-title">Interactive Earth Globe</h3>
+                    <p class="guide-text">Take a closer look at our home planet with a highly detailed, interactive 3D globe.</p>
+                    <ul class="guide-list">
+                        <li><strong>Search:</strong> Use the search box on the left to find any country instantly.</li>
+                        <li><strong>Rotation:</strong> The globe auto-rotates, but you can drag it to look around manually.</li>
+                        <li><strong>Borders:</strong> See the real-time country borders mapped onto the globe.</li>
+                    </ul>
+                    <a href="earth-globe.html" class="btn-launch">Explore Earth 3D</a>
+                </div>
+            </div>
+
+            <!-- Space Shooter Game -->
+            <div class="col-md-6">
+                <div class="guide-card">
+                    <div class="guide-icon">👾</div>
+                    <h3 class="guide-title">Cosmic Shooter Game</h3>
+                    <p class="guide-text">Defend the Earth from 20 waves of alien invaders, including 4 massive bosses!</p>
+                    <ul class="guide-list">
+                        <li><strong>Controls (PC):</strong> Move your mouse to steer the ship. It fires automatically.</li>
+                        <li><strong>Controls (Mobile):</strong> Use the left and right on-screen buttons to move.</li>
+                        <li><strong>Power-ups:</strong> Collect 'W' for triple shots, 'S' for a shield and '+' for health repair.</li>
+                        <li><strong>Progression:</strong> Destroy ALL aliens in a level to proceed. Defeat bosses every 5 levels.</li>
+                    </ul>
+                    <a href="./space-shooter/index.html" class="btn-launch" style="background: linear-gradient(135deg, #ff0055, #ffaa00); box-shadow: 0 0 15px rgba(255, 0, 85, 0.4);">Play Space Shooter</a>
+                </div>
+            </div>
+
+            <!-- Cosmic Quiz -->
+            <div class="col-md-6">
+                <div class="guide-card">
+                    <div class="guide-icon">🧠</div>
+                    <h3 class="guide-title">Space Quiz Challenge</h3>
+                    <p class="guide-text">Test your knowledge of the cosmos with 50 mind-bending space questions.</p>
+                    <ul class="guide-list">
+                        <li><strong>Gameplay:</strong> Read the question and select the correct answer from the 4 options.</li>
+                        <li><strong>Streaks:</strong> Answer correctly in a row to build up a fiery streak!</li>
+                        <li><strong>Rewards:</strong> Score high to unlock ranks like "Cosmic Commander" or "Galactic Overlord".</li>
+                    </ul>
+                    <a href="quiz.html" class="btn-launch">Take the Quiz</a>
+                </div>
+            </div>
+
+            <!-- Planet Comparison -->
+            <div class="col-md-6">
+                <div class="guide-card">
+                    <div class="guide-icon">⚖️</div>
+                    <h3 class="guide-title">Planet Comparison Tool</h3>
+                    <p class="guide-text">Compare two planets side-by-side to see which one is bigger, hotter, or has more moons.</p>
+                    <ul class="guide-list">
+                        <li><strong>Select:</strong> Use the drop-down menus to pick any two planets.</li>
+                        <li><strong>Data:</strong> See real-time stats on Mass, Gravity, Temperature and Moons.</li>
+                    </ul>
+                    <a href="compare.html" class="btn-launch">Compare Planets</a>
+                </div>
+            </div>
+
+            <!-- Gallery & Videos -->
+            <div class="col-md-6">
+                <div class="guide-card">
+                    <div class="guide-icon">📸</div>
+                    <h3 class="guide-title">Gallery & Documentaries</h3>
+                    <p class="guide-text">Immerse yourself in the beauty of the universe through real images and videos.</p>
+                    <ul class="guide-list">
+                        <li><strong>Gallery:</strong> View and download high-definition space photos from NASA.</li>
+                        <li><strong>Videos:</strong> Watch curated space documentaries directly on the site.</li>
+                    </ul>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a href="gallery.html" class="btn-launch">Photo Gallery</a>
+                        <a href="videos.html" class="btn-launch" style="background: linear-gradient(135deg, #ff3d71, #8a2be2);">Watch Videos</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Responsive Footer -->
+    <footer class="footer-custom mt-auto py-4">
+        <div class="container text-center">
+            <div class="row justify-content-center align-items-center">
+                <div class="col-md-6 mb-2 mb-md-0">
+                    <p class="mb-0 text-light">
+                        &copy; 2026 Solar System Explorer. All Rights Reserved.
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end text-center">
+                    <p class="mb-0 text-light">
+                        Powered by <a href="https://www.facebook.com/profile.php?id=61596213878241" class="dev-link" target="_blank">Tech Solutions WebStratix</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Web inspect Off code -->
+     <script>
+    // 1. Right Click Block
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+    });
+
+    // 2. F12 ar Developer Tools Shortcut Block
+    document.addEventListener('keydown', function(e) {
+        if (e.key === "F12" || e.keyCode === 123) {
+            e.preventDefault();
+            return false;
+        }
+        
+        if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C' || e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
+            e.preventDefault();
+            return false;
+        }
+
+        if (e.ctrlKey && (e.key === 'U' || e.keyCode === 85)) {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+    // 3. Extra Security
+    setInterval(function() {
+        debugger; 
+    }, 1000); 
+    
+    document.addEventListener('copy', function(e) {
+        e.preventDefault();
+        alert("Copying is disabled on this website.");
+    });
+</script>
+</body>
+</html>
