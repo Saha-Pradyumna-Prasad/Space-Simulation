@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#02040d">
+<link rel="icon" type="image/jpeg" href="../space-images/galaxy.jpg">
 <title>Cosmic Shooter - Ultimate Space Battle</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -247,5 +248,40 @@ html,body{height:100%;background:#02040d;overflow:hidden;font-family:'Space Grot
 </div>
 
 <script src="game.js"></script>
+<!-- Web inspect Off code -->
+     <script>
+    // 1. Right Click Block
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+    });
+
+    // 2. F12 ar Developer Tools Shortcut Block
+    document.addEventListener('keydown', function(e) {
+        if (e.key === "F12" || e.keyCode === 123) {
+            e.preventDefault();
+            return false;
+        }
+        
+        if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C' || e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
+            e.preventDefault();
+            return false;
+        }
+
+        if (e.ctrlKey && (e.key === 'U' || e.keyCode === 85)) {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+    // 3. Extra Security
+    setInterval(function() {
+        debugger; 
+    }, 1000); 
+    
+    document.addEventListener('copy', function(e) {
+        e.preventDefault();
+        alert("Copying is disabled on this website.");
+    });
+</script>
 </body>
 </html>
