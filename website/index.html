@@ -39,23 +39,28 @@
         </div>
     </section>
 
+           <!-- ========================================== -->
+    <!-- QUIZ SECTION WITH NEW PAGE LINK -->
     <!-- ========================================== -->
-    <!-- QUIZ SECTION ADD KORA HOYECHE -->
-    <!-- ========================================== -->
-    <section id="quiz" class="container py-5 mb-5">
-        <h2 class="glow-text text-center mb-4">🚀 Space Quiz Challenge</h2>
+    <section id="quiz" class="container py-5 mb-5 text-center">
+        <h2 class="glow-text mb-4">🚀 Space Quiz Challenge</h2>
         <div class="row justify-content-center">
             <div class="col-md-8">
-                <div class="quiz-card p-4 rounded" style="background: rgba(20, 25, 45, 0.8); border: 1px solid #00d2ff; backdrop-filter: blur(10px); box-shadow: 0 0 20px rgba(0,210,255,0.2);">
-                    <h4 id="quizQuestion" class="text-center mb-4 text-light fw-bold">Loading Question...</h4>
+                <div class="quiz-card p-5 rounded" style="background: rgba(20, 25, 45, 0.85); border: 1px solid #00d2ff; backdrop-filter: blur(15px); box-shadow: 0 0 30px rgba(0,210,255,0.3);">
                     
-                    <div id="quizOptions" class="d-grid gap-3"></div>
+                    <h3 class="text-light fw-bold mb-3" style="font-family: 'Orbitron', sans-serif;">
+                        Are You Ready to Test Your Space Knowledge?
+                    </h3>
                     
-                    <div id="quizResult" class="mt-4 text-center fs-4 fw-bold" style="min-height: 40px;"></div>
+                    <p class="text-info fs-5 mb-4">
+                        Take on the ultimate Cosmic Challenge with <strong>50 fun questions</strong>. Track your progress, build streaks, and earn your official Space Rank!
+                    </p>
                     
-                    <div class="text-center mt-4 border-top border-secondary pt-4">
-                        <button class="btn btn-outline-info px-4 py-2" onclick="nextQuestion()">Next Question ➡️</button>
-                    </div>
+                    <!-- The Link to quiz.html -->
+                    <a href="quiz.html" class="btn btn-info btn-lg px-5 py-3 fs-5 fw-bold shadow-lg" style="border-radius: 50px; transition: all 0.3s ease; box-shadow: 0 0 20px rgba(0, 210, 255, 0.5);">
+                        🚀 Start The Quiz Challenge
+                    </a>
+                    
                 </div>
             </div>
         </div>
@@ -90,7 +95,7 @@
                 </div>
                 <div class="col-md-6 text-md-end text-center">
                     <p class="mb-0 text-light">
-                        Powered by <a href="#" class="dev-link">Dev.Ankur</a>
+                        Powered by <a href="https://www.facebook.com/profile.php?id=61596213878241" class="dev-link" target="_blank">Tech Solutions WebStratix</a>
                     </p>
                 </div>
             </div>
@@ -122,81 +127,166 @@
             { question: "What force keeps planets in orbit around the Sun?", options: ["Magnetism", "Gravity", "Friction", "Centrifugal Force"], answer: "Gravity" },
             { question: "What is the closest star to Earth?", options: ["Sirius", "Proxima Centauri", "The Sun", "Alpha Centauri"], answer: "The Sun" },
             { question: "Which planet has the strongest winds in the solar system?", options: ["Neptune", "Jupiter", "Saturn", "Earth"], answer: "Neptune" },
-            { question: "What is a shooting star actually called?", options: ["Comet", "Asteroid", "Meteor", "Nebula"], answer: "Meteor" },
+            { question: "What is a shooting star actually called?", options: ["Meteor", "Asteroid", "Comet", "Nebula"], answer: "Meteor" },
             { question: "Which planet has a day longer than its year?", options: ["Venus", "Mars", "Mercury", "Earth"], answer: "Venus" },
             { question: "What is the center of our solar system?", options: ["Earth", "The Moon", "The Sun", "Jupiter"], answer: "The Sun" }
         ];
 
         let currentQuiz = 0;
         let score = 0;
+        let streak = 0;
 
         function loadQuiz() {
             const quizContainer = document.getElementById('quizOptions');
             const questionElement = document.getElementById('quizQuestion');
             const resultElement = document.getElementById('quizResult');
+            const nextBtnContainer = document.getElementById('nextBtnContainer');
             
             if (!quizContainer || !questionElement) return;
 
-            resultElement.innerText = "";
+            resultElement.innerHTML = "";
             quizContainer.innerHTML = "";
+            nextBtnContainer.style.display = "none"; // Hide next button initially
+
+            // Update Progress Bar
+            const progressPercent = (currentQuiz / quizData.length) * 100;
+            document.getElementById('quizProgressBar').style.width = `${progressPercent}%`;
+            document.getElementById('quizProgressText').innerText = `${currentQuiz} / ${quizData.length}`;
 
             if (currentQuiz >= quizData.length) {
-                questionElement.innerText = "Quiz Completed! 🎉";
-                resultElement.innerHTML = `Your Score: <span class="text-info">${score}/${quizData.length}</span>`;
-                quizContainer.innerHTML = `<button class="btn btn-success btn-lg w-100" onclick="restartQuiz()">Restart Quiz 🔄</button>`;
+                showReward();
                 return;
             }
 
             const currentQ = quizData[currentQuiz];
-            // Show question number
             questionElement.innerText = `Q${currentQuiz + 1}. ${currentQ.question}`;
 
             currentQ.options.forEach(option => {
                 const btn = document.createElement('button');
-                btn.className = 'btn btn-outline-light text-start fs-5';
+                btn.className = 'btn btn-outline-light text-start fs-5 py-3 px-4';
+                btn.style.transition = "all 0.3s ease";
                 btn.innerText = option;
-                btn.onclick = () => checkAnswer(option, currentQ.answer);
+                btn.onclick = () => checkAnswer(option, currentQ.answer, btn);
                 quizContainer.appendChild(btn);
             });
         }
 
-        function checkAnswer(selected, correct) {
-            if (selected === correct) {
-                score++;
-                document.getElementById('quizResult').innerHTML = `<span class="text-success">✅ Correct!</span>`;
-            } else {
-                document.getElementById('quizResult').innerHTML = `<span class="text-danger">❌ Wrong! The answer was ${correct}.</span>`;
-            }
-
-            // Disable buttons after answering and highlight correct one
+        function checkAnswer(selected, correct, clickedBtn) {
             const buttons = document.querySelectorAll('#quizOptions button');
+            const resultElement = document.getElementById('quizResult');
+            
+            // Disable all buttons
             buttons.forEach(btn => {
                 btn.disabled = true;
-                if(btn.innerText === correct) {
-                    btn.className = 'btn btn-success text-start fs-5'; 
-                } else if (btn.innerText === selected && selected !== correct) {
-                    btn.className = 'btn btn-danger text-start fs-5'; 
-                }
+                btn.style.cursor = "not-allowed";
             });
 
+            if (selected === correct) {
+                score++;
+                streak++;
+                clickedBtn.className = 'btn btn-success text-start fs-5 py-3 px-4'; 
+                clickedBtn.style.boxShadow = "0 0 20px rgba(0, 255, 136, 0.6)";
+                
+                // Streak Message
+                let streakMsg = streak >= 3 ? ` 🔥 ${streak} Streak!` : "";
+                resultElement.innerHTML = `<span class="text-success">✅ Correct! +1 Point${streakMsg}</span>`;
+            } else {
+                streak = 0;
+                clickedBtn.className = 'btn btn-danger text-start fs-5 py-3 px-4';
+                
+                // Highlight correct answer
+                buttons.forEach(btn => {
+                    if(btn.innerText === correct) {
+                        btn.className = 'btn btn-success text-start fs-5 py-3 px-4';
+                        btn.style.boxShadow = "0 0 15px rgba(0, 255, 136, 0.4)";
+                    }
+                });
+                resultElement.innerHTML = `<span class="text-danger">❌ Wrong! The answer was ${correct}.</span>`;
+            }
+
             currentQuiz++;
-            setTimeout(loadQuiz, 2500); // 2.5 second por next question ashbe
+            
+            // Show Next Button with a small delay
+            setTimeout(() => {
+                document.getElementById('nextBtnContainer').style.display = "block";
+            }, 800);
         }
 
         function nextQuestion() {
-            if (currentQuiz < quizData.length) {
-                currentQuiz++;
+            if (currentQuiz <= quizData.length) {
                 loadQuiz();
+            }
+        }
+
+        // ==========================================
+        // REWARD SYSTEM & FINAL SCREEN
+        // ==========================================
+        function showReward() {
+            const quizContainer = document.getElementById('quizOptions');
+            const questionElement = document.getElementById('quizQuestion');
+            const resultElement = document.getElementById('quizResult');
+            const nextBtnContainer = document.getElementById('nextBtnContainer');
+            
+            document.getElementById('quizProgressBar').style.width = `100%`;
+            document.getElementById('quizProgressText').innerText = `${quizData.length} / ${quizData.length}`;
+            
+            questionElement.innerHTML = "Mission Accomplished! 🚀";
+            nextBtnContainer.style.display = "none";
+
+            let rank = "";
+            let badge = "";
+            let color = "";
+            let msg = "";
+
+            if (score === 20) {
+                rank = "GALACTIC OVERLORD";
+                badge = "🏆";
+                color = "#ffd700"; // Gold
+                msg = "Perfect Score! You have mastered the cosmos.";
+            } else if (score >= 15) {
+                rank = "COSMIC COMMANDER";
+                badge = "🥇";
+                color = "#00ff88"; // Green
+                msg = "Excellent! You are a true space explorer.";
+            } else if (score >= 10) {
+                rank = "STAR CADET";
+                badge = "🥈";
+                color = "#00d2ff"; // Blue
+                msg = "Good job! Keep exploring the universe.";
+            } else {
+                rank = "ROOKIE EXPLORER";
+                badge = "🥉";
+                color = "#ffaa00"; // Orange
+                msg = "Nice try! Brush up your knowledge and try again.";
+            }
+
+            resultElement.innerHTML = `
+                <div class="mt-3 p-4 rounded" style="background: rgba(0,0,0,0.5); border: 2px solid ${color}; box-shadow: 0 0 30px ${color}40;">
+                    <div style="font-size: 5rem; line-height: 1; animation: bounce 1s infinite alternate;">${badge}</div>
+                    <h2 style="color: ${color}; font-family: 'Orbitron', sans-serif; margin-top: 15px; text-shadow: 0 0 15px ${color};">${rank}</h2>
+                    <h3 class="text-light mb-3">Score: <span style="color:${color}">${score} / ${quizData.length}</span></h3>
+                    <p class="text-info fs-5">${msg}</p>
+                    <button class="btn btn-outline-info btn-lg mt-3 px-5 fw-bold" onclick="restartQuiz()" style="border-color: ${color}; color: ${color};">🔄 Play Again</button>
+                </div>
+            `;
+
+            // Add bounce animation dynamically if not present
+            if (!document.getElementById('bounceStyle')) {
+                const style = document.createElement('style');
+                style.id = 'bounceStyle';
+                style.innerHTML = `@keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-10px); } }`;
+                document.head.appendChild(style);
             }
         }
 
         function restartQuiz() {
             currentQuiz = 0;
             score = 0;
+            streak = 0;
             loadQuiz();
         }
 
-        // Page load hole quiz start hobe
+        // Start Quiz on Load
         window.addEventListener('load', () => {
             if (document.getElementById('quizOptions')) {
                 loadQuiz();
