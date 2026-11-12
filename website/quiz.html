@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/jpeg" href="./space-images/galaxy.jpg">
+    <title>Cosmic Quiz Challenge - Solar System Explorer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Grotesk:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* ===== PREMIUM CYBERPUNK QUIZ DESIGN ===== */
+        body {
+            background-color: #030510;
+            color: #ffffff;
+            font-family: 'Space Grotesk', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            /* Deep Space Gradient Background */
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(0, 210, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(138, 43, 226, 0.08) 0%, transparent 50%);
+            padding: 40px 15px;
+        }
+
+        #starfield {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: -1;
+            opacity: 0.7;
+        }
+
+        /* Glassmorphism Container */
+        .quiz-container {
+            width: 100%;
+            max-width: 850px;
+            margin: 0 auto 50px auto;
+            background: rgba(10, 15, 30, 0.65);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 210, 255, 0.2);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 
+                0 30px 60px rgba(0, 0, 0, 0.8), 
+                0 0 50px rgba(0, 210, 255, 0.1),
+                inset 0 0 20px rgba(255, 255, 255, 0.02);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        /* Top Bar (Progress & Streak) */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 18px 25px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .progress-container {
+            flex-grow: 1;
+            margin-right: 25px;
+        }
+
+        .progress-text {
+            font-family: 'Orbitron', sans-serif;
+            color: #00d2ff;
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-shadow: 0 0 10px rgba(0, 210, 255, 0.4);
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.6);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            /* Cyan to Neon Green Gradient */
+            background: linear-gradient(90deg, #00d2ff, #00ff88);
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.7);
+        }
+
+        /* Base Streak Badge */
+        .streak-badge {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #8892b0;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.4s ease;
+        }
+
+        /* ACTIVE STREAK GLOW (Fire Mode) */
+        .streak-badge.active {
+            background: rgba(255, 170, 0, 0.15);
+            border: 2px solid #ffaa00;
+            color: #ffffff;
+            text-shadow: 0 0 15px #ffaa00;
+            box-shadow: 0 0 30px rgba(255, 170, 0, 0.6), inset 0 0 15px rgba(255, 170, 0, 0.3);
+            transform: scale(1.08);
+            animation: firePulse 1.5s infinite alternate;
+        }
+        
+        .streak-badge.active #streakCount {
+            color: #ffaa00;
+            text-shadow: 0 0 20px #ffaa00;
+        }
+
+        @keyframes firePulse {
+            0% { box-shadow: 0 0 15px rgba(255, 170, 0, 0.4), inset 0 0 10px rgba(255, 170, 0, 0.2); }
+            100% { box-shadow: 0 0 40px rgba(255, 170, 0, 1), inset 0 0 20px rgba(255, 170, 0, 0.5); }
+        }
+
+        /* Question Text */
+        #questionText {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.6rem;
+            line-height: 1.5;
+            margin-bottom: 35px;
+            color: #ffffff;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+            min-height: 85px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        /* Options */
+        .option-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(0, 210, 255, 0.15);
+            color: #e2e8f0;
+            padding: 16px 22px;
+            border-radius: 14px;
+            font-size: 1.15rem;
+            font-weight: 600;
+            text-align: left;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            width: 100%;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Beautiful Hover Effect */
+        .option-btn:hover:not(:disabled) {
+            background: rgba(0, 210, 255, 0.08);
+            border-color: #00d2ff;
+            transform: translateY(-4px) scale(1.01);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 210, 255, 0.25);
+            cursor: pointer;
+            color: #ffffff;
+        }
+
+        .option-letter {
+            background: rgba(0, 210, 255, 0.1);
+            color: #00d2ff;
+            width: 38px; height: 38px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            margin-right: 18px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 210, 255, 0.2);
+        }
+
+        .option-btn:hover:not(:disabled) .option-letter {
+            background: #00d2ff;
+            color: #000;
+            box-shadow: 0 0 15px #00d2ff;
+        }
+
+        /* Correct Answer State */
+        .option-btn.correct {
+            background: rgba(0, 255, 136, 0.1);
+            border-color: #00ff88;
+            color: #00ff88;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.4), inset 0 0 15px rgba(0, 255, 136, 0.1);
+            transform: scale(1.02);
+        }
+        .option-btn.correct .option-letter { background: #00ff88; color: #000; box-shadow: 0 0 15px #00ff88; }
+
+        /* Wrong Answer State */
+        .option-btn.wrong {
+            background: rgba(255, 0, 85, 0.1);
+            border-color: #ff0055;
+            color: #ff0055;
+            box-shadow: 0 0 30px rgba(255, 0, 85, 0.4), inset 0 0 15px rgba(255, 0, 85, 0.1);
+        }
+        .option-btn.wrong .option-letter { background: #ff0055; color: #fff; box-shadow: 0 0 15px #ff0055; }
+
+        /* Feedback Text */
+        #feedback {
+            font-size: 1.2rem;
+            text-align: center;
+            margin-top: 25px;
+            min-height: 35px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        /* Next Button */
+        #nextBtn {
+            display: none;
+            background: linear-gradient(135deg, #8A2BE2, #00d2ff);
+            border: none;
+            color: #ffffff;
+            padding: 15px 40px;
+            border-radius: 12px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 900;
+            margin-top: 25px;
+            float: right;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 25px rgba(138, 43, 226, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        #nextBtn:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 0 40px rgba(0, 210, 255, 0.8), 0 0 20px rgba(138, 43, 226, 0.6);
+            background: linear-gradient(135deg, #00d2ff, #8A2BE2);
+        }
+
+        /* Final Result Screen */
+        #resultScreen {
+            display: none;
+            text-align: center;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .badge-icon {
+            font-size: 8rem;
+            line-height: 1;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.5));
+        }
+
+        .rank-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .score-text {
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+            color: #a0aec0;
+        }
+
+        .result-msg {
+            color: #e2e8f0;
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            padding: 0 20px;
+            line-height: 1.6;
+        }
+
+        .restart-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid #00d2ff;
+            color: #00d2ff;
+            padding: 15px 50px;
+            border-radius: 30px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 900;
+            transition: all 0.3s ease;
+            letter-spacing: 2px;
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.2);
+        }
+
+        .restart-btn:hover {
+            background: #00d2ff;
+            color: #000;
+            box-shadow: 0 0 40px #00d2ff;
+            transform: scale(1.05);
+        }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes float { 0% { transform: translateY(0); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-10px); } 40% { transform: translateX(10px); } 60% { transform: translateX(-6px); } 80% { transform: translateX(6px); } }
+        
+        .shake { animation: shake 0.5s ease; }
+
+        .back-home {
+            position: absolute;
+            top: 25px;
+            left: 30px;
+            color: #00d2ff;
+            text-decoration: none;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            transition: 0.3s;
+            z-index: 10;
+            text-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+            background: rgba(0, 210, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 210, 255, 0.3);
+        }
+        .back-home:hover { 
+            color: #000; 
+            background: #00d2ff;
+            box-shadow: 0 0 25px #00d2ff; 
+            transform: translateX(-5px); 
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .quiz-container { padding: 25px 20px; margin-top: 80px; margin-bottom: 30px; border-radius: 20px; }
+            .top-bar { flex-direction: column; gap: 15px; padding: 15px; align-items: flex-start; }
+            .progress-container { margin-right: 0; width: 100%; }
+            .progress-text { font-size: 0.85rem; }
+            #questionText { font-size: 1.3rem; min-height: 70px; margin-bottom: 25px; }
+            .option-btn { font-size: 1rem; padding: 14px 15px; margin-bottom: 12px; }
+            .option-letter { width: 32px; height: 32px; margin-right: 12px; font-size: 0.9rem; }
+            .rank-title { font-size: 2rem; letter-spacing: 2px; }
+            .badge-icon { font-size: 5rem; }
+            .back-home { top: 15px; left: 15px; font-size: 0.85rem; padding: 8px 15px; }
+            #nextBtn { padding: 12px 25px; font-size: 1rem; width: 100%; float: none; margin-top: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="starfield"></canvas>
+
+    <a href="index.html" class="back-home">← Back to Home</a>
+
+    <div class="quiz-container">
+        
+        <!-- Game Screen -->
+        <div id="quizScreen">
+            <div class="top-bar">
+                <div class="progress-container">
+                    <div class="progress-text">
+                        <span>MISSION PROGRESS</span>
+                        <span id="progressText" style="color: #00ff88;">0 / 50</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div id="progressBar" class="progress-bar-fill"></div>
+                    </div>
+                </div>
+                
+                <!-- STREAK BADGE -->
+                <div class="streak-badge" id="streakBadge">
+                    <span style="font-size: 1.2rem; filter: drop-shadow(0 0 5px rgba(255,215,0,0.8));">🔥</span> 
+                    <span id="streakCount">0</span> 
+                    <span style="font-size: 0.8rem; letter-spacing: 1px;">STREAK</span>
+                </div>
+            </div>
+
+            <h2 id="questionText">Loading Question...</h2>
+
+            <div id="optionsContainer">
+                <!-- Options injected by JS -->
+            </div>
+
+            <div id="feedback"></div>
+
+            <button id="nextBtn" onclick="loadNextQuestion()">Next Question ➡️</button>
+            <div style="clear: both;"></div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="resultScreen">
+            <div class="badge-icon" id="resultBadge">🏆</div>
+            <h1 class="rank-title" id="resultRank">GALACTIC OVERLORD</h1>
+            <p class="score-text">You scored <span id="resultScore" style="font-weight:900; font-size: 2rem;">0</span> out of 50</p>
+            <p class="result-msg" id="resultMsg">Perfect Score! You have mastered the cosmos.</p>
+            <button class="restart-btn" onclick="restartQuiz()">🔄 Play Again</button>
+        </div>
+    </div><br>
+
+    <!-- Background Stars Script -->
+    <script>
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+        function initStars() {
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight; stars = [];
+            for (let i = 0; i < 400; i++) { 
+                stars.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, radius: Math.random() * 1.5, speed: Math.random() * 0.5 + 0.1 }); 
+            }
+        }
+        function animateStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = '#ffffff';
+            stars.forEach(star => { ctx.beginPath(); ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2); ctx.fill(); star.y -= star.speed; if (star.y < 0) { star.y = canvas.height; star.x = Math.random() * canvas.width; } });
+            requestAnimationFrame(animateStars);
+        }
+        window.addEventListener('resize', initStars); initStars(); animateStars();
+    </script>
+
+    <!-- Quiz Logic Script -->
+    <script>
+        // 50 Fun Space Questions
+        const quizData = [
+            { q: "Which planet is known as the Red Planet?", options: ["Earth", "Mars", "Jupiter", "Venus"], a: "Mars" },
+            { q: "What is the largest planet in our solar system?", options: ["Saturn", "Neptune", "Jupiter", "Uranus"], a: "Jupiter" },
+            { q: "Which planet has the most beautiful and visible rings?", options: ["Jupiter", "Saturn", "Uranus", "Neptune"], a: "Saturn" },
+            { q: "What is the hottest planet in our solar system?", options: ["Mercury", "Venus", "Mars", "Jupiter"], a: "Venus" },
+            { q: "Which planet rotates on its side?", options: ["Uranus", "Neptune", "Saturn", "Pluto"], a: "Uranus" },
+            { q: "What is the largest moon in the Solar System?", options: ["Titan", "Ganymede", "Moon", "Europa"], a: "Ganymede" },
+            { q: "How long does it take for light from the Sun to reach Earth?", options: ["8 Minutes", "8 Seconds", "8 Hours", "8 Days"], a: "8 Minutes" },
+            { q: "Which planet is closest to the Sun?", options: ["Venus", "Earth", "Mercury", "Mars"], a: "Mercury" },
+            { q: "What is the name of our galaxy?", options: ["Andromeda", "Milky Way", "Sombrero", "Whirlpool"], a: "Milky Way" },
+            { q: "Which planet has the shortest day?", options: ["Mercury", "Earth", "Jupiter", "Mars"], a: "Jupiter" },
+            { q: "What is the Great Red Spot on Jupiter?", options: ["A Volcano", "A Storm", "A Crater", "A Mountain"], a: "A Storm" },
+            { q: "What is the smallest planet in our solar system?", options: ["Mars", "Mercury", "Venus", "Earth"], a: "Mercury" },
+            { q: "Which planet is often called Earth's twin?", options: ["Mars", "Venus", "Mercury", "Neptune"], a: "Venus" },
+            { q: "Who discovered the laws of planetary motion?", options: ["Isaac Newton", "Albert Einstein", "Johannes Kepler", "Galileo Galilei"], a: "Johannes Kepler" },
+            { q: "What force keeps planets in orbit around the Sun?", options: ["Magnetism", "Gravity", "Friction", "Centrifugal Force"], a: "Gravity" },
+            { q: "What is the closest star to Earth?", options: ["Sirius", "Proxima Centauri", "The Sun", "Alpha Centauri"], a: "The Sun" },
+            { q: "Which planet has the strongest winds in the solar system?", options: ["Neptune", "Jupiter", "Saturn", "Earth"], a: "Neptune" },
+            { q: "What is a shooting star actually called?", options: ["Comet", "Asteroid", "Meteor", "Nebula"], a: "Meteor" },
+            { q: "Which planet has a day longer than its year?", options: ["Venus", "Mars", "Mercury", "Earth"], a: "Venus" },
+            { q: "What is the center of our solar system?", options: ["Earth", "The Moon", "The Sun", "Jupiter"], a: "The Sun" },
+            { q: "Which planet is known as the 'Ice Giant'?", options: ["Jupiter", "Saturn", "Neptune", "Mars"], a: "Neptune" },
+            { q: "What is the name of the force that pulls objects toward each other?", options: ["Magnetism", "Gravity", "Friction", "Inertia"], a: "Gravity" },
+            { q: "Which planet has a moon named Titan?", options: ["Jupiter", "Saturn", "Uranus", "Neptune"], a: "Saturn" },
+            { q: "What is the name of the first artificial satellite sent to space?", options: ["Apollo 11", "Sputnik 1", "Voyager 1", "Hubble"], a: "Sputnik 1" },
+            { q: "Which planet is farthest from the Sun?", options: ["Uranus", "Neptune", "Saturn", "Pluto"], a: "Neptune" },
+            { q: "What is a group of stars that form a pattern called?", options: ["Galaxy", "Constellation", "Nebula", "Solar System"], a: "Constellation" },
+            { q: "Which space agency launched the Hubble Telescope?", options: ["ISRO", "ESA", "NASA", "SpaceX"], a: "NASA" },
+            { q: "What is the name of the galaxy closest to ours?", options: ["Andromeda", "Triangulum", "Whirlpool", "Sombrero"], a: "Andromeda" },
+            { q: "Which planet has a Great Dark Spot?", options: ["Neptune", "Jupiter", "Saturn", "Uranus"], a: "Neptune" },
+            { q: "What do we call a rock that burns up in Earth's atmosphere?", options: ["Meteorite", "Meteor", "Asteroid", "Comet"], a: "Meteor" },
+            { q: "Who was the first human to walk on the Moon?", options: ["Yuri Gagarin", "Neil Armstrong", "Buzz Aldrin", "Michael Collins"], a: "Neil Armstrong" },
+            { q: "What is the name of the space telescope launched in 2021?", options: ["Hubble", "Kepler", "James Webb", "Spitzer"], a: "James Webb" },
+            { q: "Which planet is known for its extreme temperatures and thick atmosphere?", options: ["Venus", "Mars", "Mercury", "Neptune"], a: "Venus" },
+            { q: "What is the Sun mostly made of?", options: ["Oxygen", "Carbon", "Hydrogen", "Helium"], a: "Hydrogen" },
+            { q: "Which planet is nicknamed the 'Blue Planet'?", options: ["Neptune", "Earth", "Uranus", "Venus"], a: "Earth" },
+            { q: "What is the boundary around a black hole called?", options: ["Event Horizon", "Photon Ring", "Singularity", "Accretion Disk"], a: "Event Horizon" },
+            { q: "Which planet has the most moons?", options: ["Jupiter", "Saturn", "Uranus", "Neptune"], a: "Saturn" },
+            { q: "What is the name of the dwarf planet in our solar system?", options: ["Pluto", "Ceres", "Eris", "All of the above"], a: "All of the above" },
+            { q: "Which planet is known as the 'Morning Star' or 'Evening Star'?", options: ["Mars", "Venus", "Mercury", "Jupiter"], a: "Venus" },
+            { q: "What is the name of the mission that first landed humans on the Moon?", options: ["Apollo 11", "Gemini 4", "Artemis 1", "Voyager 2"], a: "Apollo 11" },
+            { q: "What is the approximate age of the universe?", options: ["13.8 Billion Years", "4.5 Billion Years", "100 Million Years", "1 Trillion Years"], a: "13.8 Billion Years" },
+            { q: "Which planet has the largest volcano in the solar system?", options: ["Earth", "Mars", "Venus", "Mercury"], a: "Mars" },
+            { q: "What is the name of the spacecraft that first left our solar system?", options: ["Voyager 1", "Pioneer 10", "New Horizons", "Cassini"], a: "Voyager 1" },
+            { q: "Which planet is known for having a hexagonal storm at its north pole?", options: ["Jupiter", "Saturn", "Neptune", "Uranus"], a: "Saturn" },
+            { q: "What is a 'Light Year' a measure of?", options: ["Time", "Distance", "Brightness", "Speed"], a: "Distance" },
+            { q: "Which moon is known to have geysers shooting water into space?", options: ["Europa", "Titan", "Enceladus", "Ganymede"], a: "Enceladus" },
+            { q: "What is the name of the supermassive black hole at the center of our galaxy?", options: ["Sagittarius A*", "M87*", "Cygnus X-1", "Ton 618"], a: "Sagittarius A*" },
+            { q: "Which planet has the most extreme seasonal changes due to its tilt?", options: ["Uranus", "Earth", "Mars", "Saturn"], a: "Uranus" },
+            { q: "What is the name of the first woman to go to space?", options: ["Sally Ride", "Valentina Tereshkova", "Mae Jemison", "Christa McAuliffe"], a: "Valentina Tereshkova" },
+            { q: "What is the name of the closest planetary system to our solar system?", options: ["Alpha Centauri", "Sirius", "Proxima Centauri", "Betelgeuse"], a: "Alpha Centauri" }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let streak = 0;
+        let hasAnswered = false;
+
+        const questionText = document.getElementById('questionText');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const feedback = document.getElementById('feedback');
+        const nextBtn = document.getElementById('nextBtn');
+        const progressText = document.getElementById('progressText');
+        const progressBar = document.getElementById('progressBar');
+        const streakBadge = document.getElementById('streakBadge');
+        const streakCount = document.getElementById('streakCount');
+
+        function loadQuestion() {
+            hasAnswered = false;
+            feedback.innerHTML = "";
+            nextBtn.style.display = "none";
+            optionsContainer.innerHTML = "";
+            
+            const q = quizData[currentQuestion];
+            questionText.innerText = `Q${currentQuestion + 1}. ${q.q}`;
+
+            // Shuffle options
+            const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+            const letters = ['A', 'B', 'C', 'D'];
+
+            shuffledOptions.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerHTML = `<span class="option-letter">${letters[index]}</span> ${opt}`;
+                btn.onclick = () => checkAnswer(opt, q.a, btn);
+                optionsContainer.appendChild(btn);
+            });
+
+            updateProgress();
+        }
+
+        function checkAnswer(selected, correct, clickedBtn) {
+            if (hasAnswered) return;
+            hasAnswered = true;
+
+            const allBtns = optionsContainer.querySelectorAll('.option-btn');
+            
+            // Disable all and highlight correct
+            allBtns.forEach(btn => {
+                btn.disabled = true;
+                btn.style.cursor = "not-allowed";
+                const btnText = btn.innerText.substring(2).trim(); 
+                if (btnText === correct) {
+                    btn.classList.add('correct');
+                }
+            });
+
+            if (selected === correct) {
+                score++;
+                streak++;
+                clickedBtn.classList.add('correct');
+                feedback.innerHTML = `<span style="color: #00ff88; text-shadow: 0 0 10px rgba(0,255,136,0.5);">✅ Correct! +1 Point</span>`;
+                
+                if (streak >= 3) {
+                    feedback.innerHTML += `<br><span style="color: #ffaa00; font-size: 1rem; text-shadow: 0 0 10px rgba(255,170,0,0.8);">🔥 You are on fire! ${streak} Streak!</span>`;
+                }
+            } else {
+                streak = 0;
+                clickedBtn.classList.add('wrong');
+                clickedBtn.classList.add('shake');
+                feedback.innerHTML = `<span style="color: #ff0055; text-shadow: 0 0 10px rgba(255,0,85,0.5);">❌ Wrong! The correct answer is ${correct}.</span>`;
+            }
+
+            updateStreak();
+            nextBtn.style.display = "block";
+            
+            setTimeout(updateProgress, 100);
+        }
+
+        function loadNextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < quizData.length) {
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function updateProgress() {
+            const percent = (currentQuestion / quizData.length) * 100;
+            progressBar.style.width = `${percent}%`;
+            progressText.innerText = `${currentQuestion} / ${quizData.length}`;
+        }
+
+        function updateStreak() {
+            streakCount.innerText = streak;
+            if (streak >= 1) {
+                streakBadge.classList.add('active');
+            } else {
+                streakBadge.classList.remove('active');
+            }
+        }
+
+        function showResult() {
+            document.getElementById('quizScreen').style.display = 'none';
+            const resultScreen = document.getElementById('resultScreen');
+            resultScreen.style.display = 'block';
+
+            const percent = (score / quizData.length) * 100;
+            let rank = "", badge = "", color = "", msg = "";
+
+            if (percent === 100) {
+                rank = "GALACTIC OVERLORD"; badge = "🏆"; color = "#ffd700";
+                msg = "Perfect Score! You have mastered the cosmos. NASA is calling!";
+            } else if (percent >= 80) {
+                rank = "COSMIC COMMANDER"; badge = "🥇"; color = "#00ff88";
+                msg = "Excellent! You are a true space explorer. The stars await you.";
+            } else if (percent >= 50) {
+                rank = "STAR CADET"; badge = "🥈"; color = "#00d2ff";
+                msg = "Good job! Keep exploring the universe to reach the top.";
+            } else {
+                rank = "ROOKIE EXPLORER"; badge = "🥉"; color = "#ffaa00";
+                msg = "Nice try! Brush up your knowledge and try again for a better rank.";
+            }
+
+            document.getElementById('resultBadge').innerText = badge;
+            document.getElementById('resultRank').innerText = rank;
+            document.getElementById('resultRank').style.color = color;
+            document.getElementById('resultRank').style.textShadow = `0 0 30px ${color}`;
+            document.getElementById('resultScore').innerText = score;
+            document.getElementById('resultScore').style.color = color;
+            document.getElementById('resultScore').style.textShadow = `0 0 15px ${color}`;
+            document.getElementById('resultMsg').innerText = msg;
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            streak = 0;
+            updateStreak();
+            updateProgress();
+            document.getElementById('resultScreen').style.display = 'none';
+            document.getElementById('quizScreen').style.display = 'block';
+            loadQuestion();
+        }
+
+        // Start the quiz
+        window.addEventListener('load', loadQuestion);
+    </script>
+
+    <!-- Responsive Footer -->
+    <footer class="footer-custom mt-auto py-4">
+        <div class="container text-center">
+            <div class="row justify-content-center align-items-center">
+                <div class="col-md-6 mb-2 mb-md-0">
+                    <p class="mb-0 text-light">
+                        &copy; 2026 Solar System Explorer. All Rights Reserved.
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end text-center">
+                    <p class="mb-0 text-light">
+                        Powered by <a href="https://www.facebook.com/profile.php?id=61596213878241" class="dev-link" target="_blank">Tech Solutions WebStratix</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Web inspect Off code -->
+     <script>
+    // 1. Right Click Block
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+    });
+
+    // 2. F12 ar Developer Tools Shortcut Block
+    document.addEventListener('keydown', function(e) {
+        if (e.key === "F12" || e.keyCode === 123) {
+            e.preventDefault();
+            return false;
+        }
+        
+        if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C' || e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
+            e.preventDefault();
+            return false;
+        }
+
+        if (e.ctrlKey && (e.key === 'U' || e.keyCode === 85)) {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+    // 3. Extra Security
+    setInterval(function() {
+        debugger; 
+    }, 1000); 
+    
+    document.addEventListener('copy', function(e) {
+        e.preventDefault();
+        alert("Copying is disabled on this website.");
+    });
+</script>
+</body>
+</html>
